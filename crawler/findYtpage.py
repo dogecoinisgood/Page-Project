@@ -13,13 +13,15 @@ from saveLink import *
 
 
 
-keyword= "益生菌"
+keyword= "口紅"
+firstSearchResult= 100
+relatedStack= 100
 
 service = Service(executable_path=os.path.abspath(os.path.dirname(__file__)+"/data/geckodriver.exe"), log_path="NUL")
 options = Options()
 
 # 不跳實際的瀏覽器視窗出來(減少消耗無謂的效能)
-# options.add_argument("--headless")
+options.add_argument("--headless")
 # 禁用通知
 options.add_argument("--disable-notifications")
 
@@ -44,8 +46,8 @@ def getFirstLinks():
 firstLinks= getFirstLinks()
 
 # 如果第一批連結的數量少於20，則往下捲動，載入更連結後再重新拿一次第一批連結，最多捲動100次
-for i in range(100):
-    if len(firstLinks) >= 100:
+for i in range(firstSearchResult):
+    if len(firstLinks) >= firstSearchResult:
         break
     body= WebDriverWait(firefox, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "ytd-app")))
     firefox.execute_script("window.scrollTo(0,document.querySelector('ytd-app').scrollHeight)")
@@ -106,7 +108,7 @@ def findRelated(href ,num:int):
 # 分別進入第一批連結，並取得資料與下一批連結
 for i,firstLink in enumerate(firstLinks):
     print("---", i, "/", len(firstLinks), "---")
-    findRelated(firstLink, 10)
+    findRelated(firstLink, relatedStack)
     
 
 
