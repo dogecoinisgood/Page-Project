@@ -1,2 +1,3 @@
 crawler/python-3.11.5-embed
-crawler/data
+crawler/data/ffmpeg
+crawler/data/whisper_model

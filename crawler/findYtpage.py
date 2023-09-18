@@ -47,9 +47,10 @@ firstLinks= getFirstLinks()
 for i in range(100):
     if len(firstLinks) >= 100:
         break
-    firefox.execute_script("window.scrollTo(0,document.body.scrollHeight)")
+    body= WebDriverWait(firefox, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "ytd-app")))
+    firefox.execute_script("window.scrollTo(0,document.querySelector('ytd-app').scrollHeight)")
     firstLinks= getFirstLinks()
-    
+
 
 
 # 候選連結名單: 跑過的。以及已經抓到，但還沒跑的連結。避免一直跑重複的網頁

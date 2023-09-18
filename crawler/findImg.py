@@ -1,0 +1,58 @@
+# 使用python-embed版時要加這2行
+import sys, os, time
+sys.path.append(os.path.dirname(__file__))
+
+from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from bs4 import BeautifulSoup
+from saveLink import *
+
+
+
+keyword= "海洋垃圾"
+
+service = Service(executable_path="data/geckodriver.exe", log_path="NUL")
+options = Options()
+
+# 不跳實際的瀏覽器視窗出來(減少消耗無謂的效能)
+# options.add_argument("--headless")
+# 禁用通知
+options.add_argument("--disable-notifications")
+
+firefox= webdriver.Firefox(service=service, options=options)
+# 隱含等待: 等待網頁載入完成後，再執行下面的程式，且只需設定一次，下面再有仔入網頁的動作時，無須再次設定，也會等待(最多10秒)網頁在入後再執行
+firefox.implicitly_wait(10)
+
+
+
+firefox.get(f"https://www.google.com.tw/search?q={keyword}&source=lnms&tbm=isch&sa")
+
+
+
+imgLinks= []
+
+# 如果第一批連結的數量少於20，則往下捲動，載入更連結後再重新拿一次第一批連結，最多捲動100次
+for i in range(100):
+    if len(imgLinks) >= 100:
+        break
+    
+    imgElements= WebDriverWait(firefox, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "img.rg_i.Q4LuWd[src]")))
+    imgLinks= [imgElement.get_attribute("src") for imgElement in imgElements]
+    
+    try:
+        firefox.find_element(By.CSS_SELECTOR, "input[jsaction='Pmjnye2']").click()
+    except: pass
+    
+    
+    firefox.execute_script("window.scrollTo(0,document.querySelector('#islmp').scrollHeight)")
+# print(imgLinks)
+
+
+
+
+
+
