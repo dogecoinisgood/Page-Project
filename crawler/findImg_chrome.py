@@ -51,8 +51,8 @@ for i in range(100):
     
     
     imgElements= WebDriverWait(chrome, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "img.rg_i.Q4LuWd[src]")))
-    newImgLinks= [imgElement.get_attribute("src") for imgElement in imgElements if imgElement.get_attribute("src") not in imgLinks]
-    imgLinks+= newImgLinks
+    newImgElements= [imgElement for imgElement in imgElements if imgElement.get_attribute("src") not in imgLinks]
+    imgLinks+= [imgElement.get_attribute("src") for imgElement in newImgElements]
     
     if len(chrome.find_elements(By.CSS_SELECTOR, "input[jsaction='Pmjnye2']")) >0:
         chrome.find_element(By.CSS_SELECTOR, "input[jsaction='Pmjnye2']").click()
@@ -60,8 +60,10 @@ for i in range(100):
     chrome.execute_script("window.scrollTo(0,document.querySelector('#islmp').scrollHeight)")
     
     
-    for newImgLink in newImgLinks:
+    for newImgElement in newImgElements:
         try:
+            newImgElement.click()
+            newImgLink= WebDriverWait(chrome, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'img.r48jcc.pT0Scc.iPVvYb[jsaction="VQAsE"][jsname="kn3ccd"]'))).get_attribute("src")
             if newImgLink.startswith("http"):
                 image= requests.get(newImgLink).content
             else:
