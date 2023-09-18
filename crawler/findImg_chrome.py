@@ -12,7 +12,10 @@ from saveLink import *
 
 
 
+
 keyword= "海洋垃圾"
+file_prefix= ""
+
 
 service = Service(executable_path=os.path.abspath(os.path.dirname(__file__)+"/data/chromedriver.exe"))
 options = Options()
@@ -69,7 +72,7 @@ for i in range(100):
             else:
                 image = base64.b64decode(newImgLink.split(',')[-1], validate=True)
             
-            with open(imgFile+ f"/{lastFileNum}.jpg", "wb") as f:
+            with open(imgFile+ f"/{file_prefix}{lastFileNum}.jpg", "wb") as f:
                 
                 f.write(image)
             lastFileNum+= 1
