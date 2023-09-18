@@ -33,7 +33,7 @@ firefox.get(f"https://www.google.com.tw/search?q={keyword}&source=lnms&tbm=isch&
 
 
 imgLinks= []
-imgFile= "data/images"
+imgFile= os.path.abspath(os.path.dirname(__file__)+"/data/images")
 os.makedirs(imgFile, exist_ok=True)
 lastFileNum= os.listdir(imgFile)
 if lastFileNum:
@@ -65,7 +65,7 @@ for i in range(100):
             else:
                 image = base64.b64decode(newImgLink.split(',')[-1], validate=True)
             
-            with open(f"data/images/{lastFileNum}.jpg", "wb") as f:
+            with open(imgFile+ f"/{lastFileNum}.jpg", "wb") as f:
                 
                 f.write(image)
             lastFileNum+= 1

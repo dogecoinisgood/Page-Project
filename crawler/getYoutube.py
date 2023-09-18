@@ -53,7 +53,7 @@ audio = np.frombuffer(audio.raw_data, dtype=dtype).astype(np.float32) / 32768.0
 # 將現在的音檔匯出成mp3(測試用)
 # audio.export("audio2.mp3", format="mp3")
 
-model = whisper.load_model('tiny', download_root='data/whisper_model', device="cuda")
+model = whisper.load_model('tiny', download_root=os.path.abspath(os.path.dirname(__file__)+'/data/whisper_model'), device="cuda")
 result = model.transcribe(audio, language='zh', initial_prompt='請給我繁體中文的語音辨識')
 
 
