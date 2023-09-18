@@ -14,7 +14,7 @@ from saveLink import *
 
 keyword= "海洋垃圾"
 
-service = Service(executable_path=os.path.abspath(os.path.dirname(__file__)+"data/geckodriver.exe"), log_path="NUL")
+service = Service(executable_path=os.path.abspath(os.path.dirname(__file__)+"/data/geckodriver.exe"), log_path="NUL")
 options = Options()
 
 # 不跳實際的瀏覽器視窗出來(減少消耗無謂的效能)
