@@ -41,7 +41,7 @@ imgFile= os.path.abspath(os.path.dirname(__file__)+"/data/images")
 os.makedirs(imgFile, exist_ok=True)
 lastFileNum= os.listdir(imgFile)
 if lastFileNum:
-    lastFileNum= int(lastFileNum[-1].split("."))
+    lastFileNum= len(lastFileNum)
 else:
     lastFileNum= 0
 
