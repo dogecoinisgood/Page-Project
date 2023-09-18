@@ -40,18 +40,18 @@ if lastFileNum:
     lastFileNum= int(lastFileNum[-1].split("."))
 else:
     lastFileNum= 0
-
+nowNum= 0
 
 
 # 如果第一批連結的數量少於100，則往下捲動，載入更連結後再重新拿一次第一批連結，最多捲動100次
-for i in range(100):
-    if len(imgLinks) >= 100:
+for i in range(1000):
+    if len(imgLinks) >= 1000:
         break
     
     
     imgElements= WebDriverWait(firefox, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "img.rg_i.Q4LuWd[src]")))
-    newImgLinks= [imgElement.get_attribute("src") for imgElement in imgElements if imgElement.get_attribute("src") not in imgLinks]
-    imgLinks+= newImgLinks
+    newImgElements= [imgElement for imgElement in imgElements if imgElement.get_attribute("src") not in imgLinks]
+    imgLinks+= [imgElement.get_attribute("src") for imgElement in newImgElements]
     
     if len(firefox.find_elements(By.CSS_SELECTOR, "input[jsaction='Pmjnye2']")) >0:
         firefox.find_element(By.CSS_SELECTOR, "input[jsaction='Pmjnye2']").click()
@@ -59,8 +59,10 @@ for i in range(100):
     firefox.execute_script("window.scrollTo(0,document.querySelector('#islmp').scrollHeight)")
     
     
-    for newImgLink in newImgLinks:
+    for newImgElement in newImgElements:
         try:
+            newImgElement.click()
+            newImgLink= WebDriverWait(firefox, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'img.r48jcc.pT0Scc.iPVvYb[jsaction="VQAsE"][jsname="kn3ccd"]'))).get_attribute("src")
             if newImgLink.startswith("http"):
                 image= requests.get(newImgLink).content
             else:
