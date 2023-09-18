@@ -1,5 +1,5 @@
 # 使用python-embed版時要加這2行
-import sys, os, time
+import sys, os, requests, base64
 sys.path.append(os.path.dirname(__file__))
 
 from selenium import webdriver
@@ -25,7 +25,7 @@ options.add_argument("--disable-notifications")
 
 firefox= webdriver.Firefox(service=service, options=options)
 # 隱含等待: 等待網頁載入完成後，再執行下面的程式，且只需設定一次，下面再有仔入網頁的動作時，無須再次設定，也會等待(最多10秒)網頁在入後再執行
-firefox.implicitly_wait(10)
+firefox.implicitly_wait(1)
 
 
 
@@ -34,21 +34,43 @@ firefox.get(f"https://www.google.com.tw/search?q={keyword}&source=lnms&tbm=isch&
 
 
 imgLinks= []
+imgFile= "data/images"
+os.makedirs(imgFile, exist_ok=True)
+lastFileNum= os.listdir(imgFile)
+if lastFileNum:
+    lastFileNum= int(lastFileNum[-1].split("."))
+else:
+    lastFileNum= 0
+
+
 
 # 如果第一批連結的數量少於20，則往下捲動，載入更連結後再重新拿一次第一批連結，最多捲動100次
 for i in range(100):
     if len(imgLinks) >= 100:
         break
     
+    
     imgElements= WebDriverWait(firefox, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "img.rg_i.Q4LuWd[src]")))
-    imgLinks= [imgElement.get_attribute("src") for imgElement in imgElements]
+    newImgLinks= [imgElement.get_attribute("src") for imgElement in imgElements if imgElement.get_attribute("src") not in imgLinks]
     
-    try:
+    if len(firefox.find_elements(By.CSS_SELECTOR, "input[jsaction='Pmjnye2']")) >0:
         firefox.find_element(By.CSS_SELECTOR, "input[jsaction='Pmjnye2']").click()
-    except: pass
-    
     
     firefox.execute_script("window.scrollTo(0,document.querySelector('#islmp').scrollHeight)")
+    
+    
+    for newImgLink in newImgLinks:
+        try:
+            if newImgLink.startswith("http"):
+                image= requests.get(newImgLink).content
+            else:
+                image = base64.b64decode(newImgLink.split(',')[-1], validate=True)
+            
+            with open(f"data/images/{lastFileNum}.jpg", "wb") as f:
+                
+                f.write(image)
+            lastFileNum+= 1
+        except: pass
 # print(imgLinks)
 
 
