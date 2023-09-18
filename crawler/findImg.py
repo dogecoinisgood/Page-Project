@@ -51,6 +51,7 @@ for i in range(100):
     
     imgElements= WebDriverWait(firefox, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "img.rg_i.Q4LuWd[src]")))
     newImgLinks= [imgElement.get_attribute("src") for imgElement in imgElements if imgElement.get_attribute("src") not in imgLinks]
+    imgLinks+= newImgLinks
     
     if len(firefox.find_elements(By.CSS_SELECTOR, "input[jsaction='Pmjnye2']")) >0:
         firefox.find_element(By.CSS_SELECTOR, "input[jsaction='Pmjnye2']").click()
