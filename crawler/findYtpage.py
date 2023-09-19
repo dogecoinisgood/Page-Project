@@ -8,6 +8,7 @@ from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup
 from saveLink import *
 
@@ -68,6 +69,8 @@ def findRelated(href ,num:int):
     
     if num>0 and getData("youtube", "SELECT link FROM youtube WHERE link='{}';".format(href.replace("'", "''")))==[]:
         try:
+            firefox.find_element(By.TAG_NAME,"body").send_keys(Keys.COMMAND + 't')
+            firefox.find_element(By.TAG_NAME,"body").send_keys(Keys.COMMAND + 'w')
             firefox.get(href)
             # 確認title載入後，獲取title的文字
             title= WebDriverWait(firefox, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "h1.style-scope.ytd-watch-metadata")))
@@ -97,7 +100,6 @@ def findRelated(href ,num:int):
                 # 篩選掉含有時間戳的網址(大該率是同一部影片的不同時間而已)
                 results= [result for result in results if result!=None and "www.youtube.com/watch?" in result and '&t=' not in result]
                 
-                
                 for result in results:
                     if result not in candidates:
                         time.sleep(0.2)
@@ -113,7 +115,8 @@ def findRelated(href ,num:int):
 for i,firstLink in enumerate(firstLinks):
     print("---", i, "/", len(firstLinks), "---")
     findRelated(firstLink, relatedStack)
-    
+
+firefox.close()
 
 
 
