@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+import xml.dom.minidom
 import numpy as np
 import pandas as pd
 import os, cv2, time, threading
@@ -43,9 +44,31 @@ img = cv2.imread((base_path+'/data/images/'+unMarkImages[nowImageNum]), cv2.IMRE
 dragPoint= None
 # 紀錄同一張圖的其他框
 rectangles= []
+def showRectangles():
+    global rectangles, img
+    img = cv2.imread((base_path+'/data/images/'+unMarkImages[nowImageNum]), cv2.IMREAD_COLOR)
+    for start,end in rectangles:
+        cv2.rectangle(img, start, end, (0,255,0), 2)
+
+
+def readRectanglesFromDf():
+    global df, nowImageNum, rectangles
+    newSeries= df.loc[df['name'] == unMarkImages[nowImageNum]]
+    rectangles= []
+    if not newSeries.empty:
+        newSeries= newSeries.iloc[0]
+        for polygon in newSeries['polygon']:
+            p0, _, _, p3= polygon["points"].split(";")
+            p0, p3= (int(p0.split(",")[0]), int(p0.split(",")[1])), (int(p3.split(",")[0]), int(p3.split(",")[1]))
+            rectangles.append([p0, p3])
+            cv2.rectangle(img, p0, p3, (0,255,0), 2)
+    showRectangles()
+readRectanglesFromDf()
+
+
 #建立回调函数
 def OnMouseAction(event,x,y,flags,param):
-    global mousePressing, dragPoint, img, rectangles
+    global dragPoint, img, rectangles
     
     # 左鍵按下
     if event == cv2.EVENT_LBUTTONDOWN:
@@ -59,48 +82,55 @@ def OnMouseAction(event,x,y,flags,param):
     # 左鍵拖曳
     elif flags==cv2.EVENT_FLAG_LBUTTON:
         # 在按下滑鼠拖曳的時候，要隨時更新背景的圖片，以消除前一貞畫下的框
-        img = cv2.imread((base_path+'/data/images/'+unMarkImages[nowImageNum]), cv2.IMREAD_COLOR)
-        for start,end in rectangles:
-            cv2.rectangle(img, start, end, (0,255,0), 2)
+        showRectangles()
         cv2.rectangle(img, (dragPoint[0],dragPoint[1]), (x,y), (0,255,0), 2)
     # 右鍵按下
     elif event==cv2.EVENT_RBUTTONDOWN :
         # 重設同一張圖之前紀錄下來的其他框
         rectangles= []
-        img = cv2.imread((base_path+'/data/images/'+unMarkImages[nowImageNum]), cv2.IMREAD_COLOR)
+        showRectangles()
 
 
 # 儲存文件
 def saveXML():
     global img, rectangles, df, nowImageNum, tree, root
     
-    imgElement= ET.fromstring('<image name="{unMarkImages[nowImageNum]}" height="{img.shape[0]}" weight="{img.shape[1]}"></image>')
+    imgElement= ET.fromstring(f'<image name="{unMarkImages[nowImageNum]}" height="{img.shape[0]}" width="{img.shape[1]}"></image>')
     newDict= {"name":unMarkImages[nowImageNum],"width":img.shape[1],"height":img.shape[0], "polygon":[]}
     for start,end in rectangles:
-        polygonElement= ET.fromstring('<polygon label="{label}" points="{start[0]},{start[1]};{start[0]},{end[1]};{end[0]},{start[1]};{end[0]},{end[1]}" />')
-        imgElement.insert(polygonElement, "polygon")
+        polygonElement= ET.fromstring(f'<polygon label="{label}" points="{start[0]},{start[1]};{start[0]},{end[1]};{end[0]},{start[1]};{end[0]},{end[1]}" />')
+        imgElement.insert(-1, polygonElement)
         newDict["polygon"].append({"label": label, "points":f"{start[0]},{start[1]};{start[0]},{end[1]};{end[0]},{start[1]};{end[0]},{end[1]}"})
-        
-    df= pd.concat([df, pd.Series(newDict)])
-    root.insert(imgElement, "image")
     
-    # 重設所有的框，並自動跳到下一張
-    rectangles= []
-    nowImageNum+= 1
-    img = cv2.imread((base_path+'/data/images/'+unMarkImages[nowImageNum]), cv2.IMREAD_COLOR)
+    
+    nowSeries= df.loc[df['name'] == unMarkImages[nowImageNum]]
+    if nowSeries.empty:
+        df.loc[len(df)] = newDict
+        root.insert(-1, imgElement)
+    else:
+        idx= df.index[df['name'] == unMarkImages[nowImageNum]].tolist()[0]
+        df['polygon'].iat[idx]= newDict['polygon']
+        root[idx]= imgElement
+    
+    tree.write(base_path+"/data/dataset_10000_update_0912.xml")
+    
+    # # 重設所有的框，並自動跳到下一張
+    # rectangles= []
+    # nowImageNum+= 1
+    # img = cv2.imread((base_path+'/data/images/'+unMarkImages[nowImageNum]), cv2.IMREAD_COLOR)
 
 
 
 # 上/下一張圖片
 def changeImg(x):
-    global nowImageNum, img
+    global nowImageNum
     if x == -1:
         nowImageNum= nowImageNum-1 if nowImageNum>0 else 0
     elif x == 1:
         nowImageNum= nowImageNum+1 if (nowImageNum<len(unMarkImages)-1) else len(unMarkImages)-1
     cv2.setTrackbarPos('<-\t->', 'image', 0)
-    img = cv2.imread((base_path+'/data/images/'+unMarkImages[nowImageNum]), cv2.IMREAD_COLOR)
     cv2.setWindowTitle('image', unMarkImages[nowImageNum])
+    readRectanglesFromDf()
 
 
 
