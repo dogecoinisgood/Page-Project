@@ -9,5 +9,5 @@
 
 import re
 
-print(re.search("[hello|hey]","hello world"))
+print(re.search("(hello|hey)","hell2o world"))
 print(re.search("z","ho1w are you"))

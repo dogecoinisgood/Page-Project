@@ -85,8 +85,8 @@ def findRelated(href ,num:int):
             print("----")
             
             # 如果title或description中有包含關鍵字，就儲存到資料庫，並開始找相關連結
-            reStr= f"[{'|'.join(keywords.strip().split())}]"
-            reStr2= f"[{'|'.join(keywords2.strip().split())}]"
+            reStr= f"({'|'.join(keywords.strip().split())})"
+            reStr2= f"({'|'.join(keywords2.strip().split())})"
             if re.search(reStr, title+description) and re.search(reStr2, title+description):
                 insertData("youtube", {"title":title, "description":description, "link": href})
                 
