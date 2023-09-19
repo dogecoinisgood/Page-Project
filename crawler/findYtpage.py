@@ -13,8 +13,8 @@ from saveLink import *
 
 
 
-keywords= "口紅"
-keywords2= ""
+keywords= "口紅 護唇膏 唇膏 唇蜜 唇釉 唇彩"
+keywords2= "唇部 唇妝 持色 水潤 顯色 飽和 保濕 滋潤 光澤 植物精油 護唇 抗氧化 維他命E油 超水 角鯊烷 女孩 大勢 襯膚 滑順顯色 持久度 荷巴油 唇膏控  薄擦 厚擦 濃郁 絲絨 低估 服貼 質地 覆蓋力 遮色"
 firstSearchResult= 100
 relatedStack= 100
 
@@ -85,8 +85,8 @@ def findRelated(href ,num:int):
             print("----")
             
             # 如果title或description中有包含關鍵字，就儲存到資料庫，並開始找相關連結
-            reStr= f"[{'|'.join(keywords.split())}]"
-            reStr2= f"[{'|'.join(keywords2.split())}]"
+            reStr= f"[{'|'.join(keywords.strip().split())}]"
+            reStr2= f"[{'|'.join(keywords2.strip().split())}]"
             if re.search(reStr, title+description) and re.search(reStr2, title+description):
                 insertData("youtube", {"title":title, "description":description, "link": href})
                 
