@@ -45,7 +45,7 @@ def getFirstLinks():
 
 firstLinks= getFirstLinks()
 
-# 如果第一批連結的數量少於20，則往下捲動，載入更連結後再重新拿一次第一批連結，最多捲動100次
+# 如果第一批連結的數量少於100(firstSearchResult設定的數字)，則往下捲動，載入更連結後再重新拿一次第一批連結，最多捲動100(firstSearchResult設定的數字)次
 for i in range(firstSearchResult):
     if len(firstLinks) >= firstSearchResult:
         break

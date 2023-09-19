@@ -78,11 +78,11 @@ def saveXML():
     newDict= {"name":unMarkImages[nowImageNum],"width":img.shape[1],"height":img.shape[0], "polygon":[]}
     for start,end in rectangles:
         polygonElement= ET.fromstring('<polygon label="{label}" points="{start[0]},{start[1]};{start[0]},{end[1]};{end[0]},{start[1]};{end[0]},{end[1]}" />')
-        imgElement.insert(polygonElement)
+        imgElement.insert(polygonElement, "polygon")
         newDict["polygon"].append({"label": label, "points":f"{start[0]},{start[1]};{start[0]},{end[1]};{end[0]},{start[1]};{end[0]},{end[1]}"})
         
     df= pd.concat([df, pd.Series(newDict)])
-    root.insert(imgElement)
+    root.insert(imgElement, "image")
     
     # 重設所有的框，並自動跳到下一張
     rectangles= []

@@ -9,5 +9,5 @@
 
 import re
 
-print(re.search("[b|d]","asdfc"))
-print(re.compile("c a"))
+print(re.search("[hello|hey]","hello world"))
+print(re.search("how.*you","ho1w are you"))
