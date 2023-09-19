@@ -30,7 +30,7 @@ options.add_argument("--disable-notifications")
 
 firefox= webdriver.Firefox(service=service, options=options)
 # 隱含等待: 等待網頁載入完成後，再執行下面的程式，且只需設定一次，下面再有仔入網頁的動作時，無須再次設定，也會等待(最多10秒)網頁在入後再執行
-firefox.implicitly_wait(10)
+firefox.implicitly_wait(5)
 
 
 
@@ -69,8 +69,6 @@ def findRelated(href ,num:int):
     
     if num>0 and getData("youtube", "SELECT link FROM youtube WHERE link='{}';".format(href.replace("'", "''")))==[]:
         try:
-            firefox.find_element(By.TAG_NAME,"body").send_keys(Keys.COMMAND + 't')
-            firefox.find_element(By.TAG_NAME,"body").send_keys(Keys.COMMAND + 'w')
             firefox.get(href)
             # 確認title載入後，獲取title的文字
             title= WebDriverWait(firefox, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "h1.style-scope.ytd-watch-metadata")))
@@ -116,7 +114,7 @@ for i,firstLink in enumerate(firstLinks):
     print("---", i, "/", len(firstLinks), "---")
     findRelated(firstLink, relatedStack)
 
-firefox.close()
+firefox.quit()
 
 
 
