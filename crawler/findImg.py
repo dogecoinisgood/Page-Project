@@ -13,6 +13,8 @@ from saveLink import *
 
 
 keyword= "海洋垃圾"
+file_prefix= "waste_30_"
+
 
 service = Service(executable_path=os.path.abspath(os.path.dirname(__file__)+"/data/geckodriver.exe"), log_path="NUL")
 options = Options()
@@ -68,7 +70,7 @@ for i in range(1000):
             else:
                 image = base64.b64decode(newImgLink.split(',')[-1], validate=True)
             
-            with open(imgFile+ f"/{lastFileNum}.jpg", "wb") as f:
+            with open(imgFile+ f"/{file_prefix}{lastFileNum}.jpg", "wb") as f:
                 
                 f.write(image)
             lastFileNum+= 1

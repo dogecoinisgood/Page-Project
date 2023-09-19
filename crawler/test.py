@@ -7,6 +7,7 @@
 # jieba.set_dictionary('dict.txt.big')
 
 
-from bs4 import BeautifulSoup
-soup= BeautifulSoup("<div>hello</div>", "html.parser")
-print(soup.get_text())
+import re
+
+print(re.search("[b|d]","asdfc"))
+print(re.compile("c a"))

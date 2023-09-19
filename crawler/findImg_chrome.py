@@ -14,7 +14,7 @@ from saveLink import *
 
 
 keyword= "海洋垃圾"
-file_prefix= ""
+file_prefix= "waste_40_"
 
 
 service = Service(executable_path=os.path.abspath(os.path.dirname(__file__)+"/data/chromedriver.exe"))
@@ -24,6 +24,7 @@ options = Options()
 # options.add_argument("--headless")
 # 禁用通知
 options.add_argument("--disable-notifications")
+# 禁用log
 options.add_experimental_option("excludeSwitches", ["disable-logging"])
 
 chrome= webdriver.Chrome(service=service, options=options)
