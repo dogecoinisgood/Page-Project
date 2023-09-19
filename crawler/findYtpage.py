@@ -63,8 +63,7 @@ candidates= []+ firstLinks
 
 def findRelated(href ,num:int):
     # 篩選掉含有時間戳和播放清單的部分
-    if "&t=" in href:
-        href= href.split("&t=")[0].split("&list=")[0]
+    href= href.split("&t=")[0].split("&list=")[0]
     # 確認此連結不在資料庫裡
     
     if num>0 and getData("youtube", "SELECT link FROM youtube WHERE link='{}';".format(href.replace("'", "''")))==[]:
