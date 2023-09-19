@@ -23,7 +23,7 @@ service = Service(executable_path=os.path.abspath(os.path.dirname(__file__)+"/da
 options = Options()
 
 # 不跳實際的瀏覽器視窗出來(減少消耗無謂的效能)
-options.add_argument("--headless")
+# options.add_argument("--headless")
 # 禁用通知
 options.add_argument("--disable-notifications")
 
@@ -33,7 +33,7 @@ firefox.implicitly_wait(10)
 
 
 
-firefox.get(f"https://www.youtube.com/results?search_query={keywords+keywords2}")
+firefox.get(f"https://www.youtube.com/results?search_query={keywords} {keywords2}")
 
 # 從搜尋結果獲取第一批連結
 def getFirstLinks():
