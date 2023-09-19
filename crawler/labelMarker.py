@@ -51,7 +51,7 @@ def showRectangles():
         cv2.rectangle(img, start, end, (0,255,0), 2)
 
 
-def readRectanglesFromDf():
+def readRectanglesFromDf(num):
     global df, nowImageNum, rectangles
     newSeries= df.loc[df['name'] == unMarkImages[nowImageNum]]
     rectangles= []

@@ -10,4 +10,4 @@
 import re
 
 print(re.search("[hello|hey]","hello world"))
-print(re.search("how.*you","ho1w are you"))
+print(re.search("z","ho1w are you"))

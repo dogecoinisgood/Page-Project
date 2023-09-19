@@ -13,9 +13,11 @@ from saveLink import *
 
 
 
-keyword= "口紅"
+keywords= "口紅"
+keywords2= ""
 firstSearchResult= 100
 relatedStack= 100
+
 
 service = Service(executable_path=os.path.abspath(os.path.dirname(__file__)+"/data/geckodriver.exe"), log_path="NUL")
 options = Options()
@@ -31,7 +33,7 @@ firefox.implicitly_wait(10)
 
 
 
-firefox.get(f"https://www.youtube.com/results?search_query={keyword}")
+firefox.get(f"https://www.youtube.com/results?search_query={keywords+keywords2}")
 
 # 從搜尋結果獲取第一批連結
 def getFirstLinks():
@@ -83,8 +85,9 @@ def findRelated(href ,num:int):
             print("----")
             
             # 如果title或description中有包含關鍵字，就儲存到資料庫，並開始找相關連結
-            reStr= f"[{'|'.join(keyword.split())}]"
-            if re.search(reStr, title) or re.search(reStr, description):
+            reStr= f"[{'|'.join(keywords.split())}]"
+            reStr2= f"[{'|'.join(keywords2.split())}]"
+            if re.search(reStr, title+description) and re.search(reStr2, title+description):
                 insertData("youtube", {"title":title, "description":description, "link": href})
                 
                 # 開始找右邊相關影片的其他連結
