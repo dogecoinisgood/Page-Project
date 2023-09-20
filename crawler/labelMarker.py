@@ -16,7 +16,7 @@ import os, cv2, time, threading
 
 
 
-# 現在要標記的種類(ex: WASTE_1)
+# 現在要標記的種類(ex: WASTE_1)。若無填寫，則為預設格式的檔案名稱(ex:WASTE_1-01.jpg)中"-"前半的部分(ex:WASTE_1)
 label= ""
 # 指定從哪個檔案開始，若沒設定，則為從低一張沒有標記的圖片開始
 target_file= ""
@@ -113,6 +113,7 @@ def saveXML():
     imgElement= ET.fromstring(f'<image name="{unMarkImages[nowImageNum]}" height="{img.shape[0]}" width="{img.shape[1]}"></image>')
     newDict= {"name":unMarkImages[nowImageNum],"width":img.shape[1],"height":img.shape[0], "polygon":[]}
     for start,end in rectangles:
+        nowLabel= label if label else unMarkImages[nowImageNum].split("-")[0]
         polygonElement= ET.fromstring(f'<polygon label="{label}" points="{start[0]},{start[1]};{start[0]},{end[1]};{end[0]},{start[1]};{end[0]},{end[1]}" />')
         imgElement.insert(-1, polygonElement)
         newDict["polygon"].append({"label": label, "points":f"{start[0]},{start[1]};{start[0]},{end[1]};{end[0]},{start[1]};{end[0]},{end[1]}"})
