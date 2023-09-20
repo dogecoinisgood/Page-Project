@@ -33979,7 +33979,4 @@
         <polygon label="WASTE_19" points="406,281;406,672;782,281;782,672" />
         <polygon label="WASTE_20" points="807,282;807,392;856,282;856,392" />
     </image>
-    <image height="800" id="eaa80180-57bc-415c-93bf-79ed408a364b" name="20221104_&#26032;&#21271;&#24066;_&#21271;&#28023;&#23736;&#32769;&#26757;-131.jpg" width="1200">
-        <polygon label="WASTE_10" points="360,104;360,583;916,104;916,583" />
-    </image>
-    <image name="waste_30_0.jpg" height="403" width="600"><polygon label="" points="220,140;220,259;349,140;349,259" /></image><image name="waste_30_1.jpg" height="471" width="800"><polygon label="" points="223,125;223,211;324,125;324,211" /></image><image name="waste_30_10.jpg" height="660" width="990" /><image name="waste_30_10.jpg" height="660" width="990" /></annotations>
+    </annotations>

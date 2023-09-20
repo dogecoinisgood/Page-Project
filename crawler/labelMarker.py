@@ -47,6 +47,7 @@ rectangles= []
 def showRectangles():
     global rectangles, img
     img = cv2.imread((base_path+'/data/images/'+unMarkImages[nowImageNum]), cv2.IMREAD_COLOR)
+    cv2.setWindowTitle('image', unMarkImages[nowImageNum])
     for start,end in rectangles:
         cv2.rectangle(img, start, end, (0,255,0), 2)
 
@@ -111,23 +112,22 @@ def saveXML():
         df['polygon'].iat[idx]= newDict['polygon']
         root[idx]= imgElement
     tree.write(base_path+"/data/dataset_10000_update_0912.xml")
-    print(df.head)
+
 
 def deleteImg():
-    global unMarkImages, nowImageNum, df, root
+    global unMarkImages, nowImageNum, df, root, tree
     try:
-        pass
-        # os.remove(base_path+ "/data/images/"+ unMarkImages[nowImageNum])
+        os.remove(base_path+ "/data/images/"+ unMarkImages[nowImageNum])
     except: pass
     
-    unMarkImages.pop(nowImageNum)
     nowSeries= df.loc[df['name'] == unMarkImages[nowImageNum]]
     if not nowSeries.empty:
-        idx= df.index[df['name'] == unMarkImages[nowImageNum]].tolist()[0] -1
+        idx= df.index[df['name'] == unMarkImages[nowImageNum]].tolist()[0]
         df= df.drop([idx])
-        print(root[idx].attrib["name"])
-        root.remove(root[idx-1])
-    saveXML()
+        root.remove(root[idx])
+        tree.write(base_path+"/data/dataset_10000_update_0912.xml")
+    # 最後才將unMarkImages裡的fileName給dump掉，避免pandas和XML抓取index時發生錯誤
+    unMarkImages.pop(nowImageNum)
     readRectanglesFromDf()
 
 
@@ -139,7 +139,6 @@ def changeImg(x):
     elif x == 1:
         nowImageNum= nowImageNum+1 if (nowImageNum<len(unMarkImages)-1) else len(unMarkImages)-1
     cv2.setTrackbarPos('<-\t->', 'image', 0)
-    cv2.setWindowTitle('image', unMarkImages[nowImageNum])
     readRectanglesFromDf()
 
 
