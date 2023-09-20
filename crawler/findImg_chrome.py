@@ -14,7 +14,8 @@ from saveLink import *
 
 
 keyword= "海洋垃圾"
-file_prefix= "waste_40_"
+# 類別名稱(格式盡可能為: WASTE_1-)
+file_prefix= "waste_40-"
 
 
 service = Service(executable_path=os.path.abspath(os.path.dirname(__file__)+"/data/chromedriver.exe"))

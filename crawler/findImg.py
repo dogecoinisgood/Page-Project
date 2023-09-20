@@ -13,7 +13,8 @@ from saveLink import *
 
 
 keyword= "海洋垃圾"
-file_prefix= "waste_30_"
+# 類別名稱(格式盡可能為: WASTE_1-)
+file_prefix= "waste_30-"
 
 
 service = Service(executable_path=os.path.abspath(os.path.dirname(__file__)+"/data/geckodriver.exe"), log_path="NUL")
