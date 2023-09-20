@@ -33982,9 +33982,4 @@
     <image height="800" id="eaa80180-57bc-415c-93bf-79ed408a364b" name="20221104_&#26032;&#21271;&#24066;_&#21271;&#28023;&#23736;&#32769;&#26757;-131.jpg" width="1200">
         <polygon label="WASTE_10" points="360,104;360,583;916,104;916,583" />
     </image>
-    <image height="800" id="7c441d7a-37d0-49ea-9549-18d750ef5ce3" name="20221104_&#26032;&#21271;&#24066;_&#21271;&#28023;&#23736;&#32769;&#26757;-132.jpg" width="1200">
-        <polygon label="WASTE_20" points="352,288;352,565;744,288;744,565" />
-        <polygon label="WASTE_20" points="774,168;774,251;892,168;892,251" />
-    </image>
-    <image name="waste_30_0.jpg" height="403" width="600"><polygon label="" points="203,95;203,166;288,95;288,166" /></image><image name="waste_30_0.jpg" height="403" width="600">
-<polygon label="" points="416,242;416,347;515,242;515,347" /><polygon label="" points="341,146;341,192;370,146;370,192" /><polygon label="" points="291,370;291,309;154,370;154,309" /><polygon label="" points="192,157;192,249;282,157;282,249" /></image><image name="waste_30_1.jpg" height="471" width="800"><polygon label="" points="253,76;253,209;369,76;369,209" /></image><image name="waste_30_10.jpg" height="660" width="990"><polygon label="" points="444,296;444,456;472,296;472,456" /><polygon label="" points="244,353;244,484;302,353;302,484" /><polygon label="" points="690,272;690,414;810,272;810,414" /></image></annotations>
+    <image name="waste_30_0.jpg" height="403" width="600"><polygon label="" points="220,140;220,259;349,140;349,259" /></image><image name="waste_30_1.jpg" height="471" width="800"><polygon label="" points="223,125;223,211;324,125;324,211" /></image><image name="waste_30_10.jpg" height="660" width="990" /><image name="waste_30_10.jpg" height="660" width="990" /></annotations>

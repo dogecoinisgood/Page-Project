@@ -51,7 +51,7 @@ def showRectangles():
         cv2.rectangle(img, start, end, (0,255,0), 2)
 
 
-def readRectanglesFromDf(num):
+def readRectanglesFromDf():
     global df, nowImageNum, rectangles
     newSeries= df.loc[df['name'] == unMarkImages[nowImageNum]]
     rectangles= []
@@ -102,7 +102,6 @@ def saveXML():
         imgElement.insert(-1, polygonElement)
         newDict["polygon"].append({"label": label, "points":f"{start[0]},{start[1]};{start[0]},{end[1]};{end[0]},{start[1]};{end[0]},{end[1]}"})
     
-    
     nowSeries= df.loc[df['name'] == unMarkImages[nowImageNum]]
     if nowSeries.empty:
         df.loc[len(df)] = newDict
@@ -111,14 +110,25 @@ def saveXML():
         idx= df.index[df['name'] == unMarkImages[nowImageNum]].tolist()[0]
         df['polygon'].iat[idx]= newDict['polygon']
         root[idx]= imgElement
-    
     tree.write(base_path+"/data/dataset_10000_update_0912.xml")
-    
-    # # 重設所有的框，並自動跳到下一張
-    # rectangles= []
-    # nowImageNum+= 1
-    # img = cv2.imread((base_path+'/data/images/'+unMarkImages[nowImageNum]), cv2.IMREAD_COLOR)
+    print(df.head)
 
+def deleteImg():
+    global unMarkImages, nowImageNum, df, root
+    try:
+        pass
+        # os.remove(base_path+ "/data/images/"+ unMarkImages[nowImageNum])
+    except: pass
+    
+    unMarkImages.pop(nowImageNum)
+    nowSeries= df.loc[df['name'] == unMarkImages[nowImageNum]]
+    if not nowSeries.empty:
+        idx= df.index[df['name'] == unMarkImages[nowImageNum]].tolist()[0] -1
+        df= df.drop([idx])
+        print(root[idx].attrib["name"])
+        root.remove(root[idx-1])
+    saveXML()
+    readRectanglesFromDf()
 
 
 # 上/下一張圖片
@@ -143,7 +153,15 @@ while(img.size!=0):
     key= cv2.waitKey(1)&0xFF
     if key == ord('s'):
         saveXML()
-    if key==27:
+    elif key == ord('d'):
+        deleteImg()
+    elif key == ord('n'):
+        changeImg(1)
+    elif key == ord('b'):
+        changeImg(-1)
+    elif key == ord('f'):
+        pass
+    elif key==27:
         break
     try:
         cv2.imshow('image',img)
