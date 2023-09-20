@@ -13,7 +13,7 @@ from db import *
 
 
 keyword= "海洋垃圾"
-# 類別名稱(格式盡可能為: WASTE_1-)
+# 類別名稱(格式盡可能為: WASTE_1- ，已讓後續標記程式能夠自動填入label)
 file_prefix= "waste_30-"
 
 
