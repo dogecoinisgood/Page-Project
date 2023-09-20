@@ -43,3 +43,20 @@ def insertData(tableName, data:dict):
     conn.commit()
     # conn.close()
     return new_data_id
+
+
+def updateData(tableName, data:dict, id):
+    conn = sqlite3.connect(base_path+"/data/data.db")
+    
+    cursor= conn.cursor()
+    cursor.execute(createTableText[tableName])
+    
+    for col in data:
+        if type(data[col])==str:
+            data[col]= "'"+ data[col].replace("'","''")+ "'"
+        elif type(data[col])==int:
+            data[col]= str(data[col])
+    values= [f"{col} = {data[col]}" for col in data]
+    cursor.execute(f"UPDATE {tableName} SET {','.join(values)} WHERE id={id};")
+    conn.commit()
+    # conn.close()
