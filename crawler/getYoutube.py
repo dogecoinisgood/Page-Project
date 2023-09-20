@@ -7,7 +7,7 @@ from pydub import AudioSegment
 from pydub.utils import get_array_type
 import numpy as np
 import io, datetime, whisper, os
-from saveLink import *
+from db import *
 
 
 # base_path= "/content/drive/Mydrive/.../page-Project/crawler"
