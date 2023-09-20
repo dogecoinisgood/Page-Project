@@ -57,7 +57,7 @@ def getTextFromYtUrl(url):
     # audio.export("audio2.mp3", format="mp3")
 
     model = whisper.load_model('large', download_root=base_path+'/data/whisper_model', device="cuda")
-    # result = model.transcribe(audio, language='zh', initial_prompt='請以專業美妝部落客的身分，給我繁體中文的語音辨識 唇妝 唇釉 成膜')
+    # result = model.transcribe(audio, language='zh', initial_prompt='請以專業美妝部落客的身分，給我繁體中文的語音辨識')
     result = model.transcribe(audio, language='zh', initial_prompt='請給我繁體中文的語音辨識 海綿寶寶 派大星 章魚哥 野海熊 海犀牛')
 
     print("下載轉檔: ", (downloadTime-startTime).seconds, "秒\t文字轉換: ", (datetime.datetime.now()-downloadTime).seconds, "秒")
