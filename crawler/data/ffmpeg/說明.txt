@@ -1,0 +1,2 @@
+請至ffmepg官網(https://ffmpeg.org/download.html)
+下載ffmpeg和ffprobe，這2個檔案(檔案超過100MB，沒辦法一起上傳github)
