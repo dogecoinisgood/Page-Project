@@ -15,6 +15,11 @@ import os, cv2, time, threading
 # d: 刪除現在的圖片
 # f: (預定)自動填充沙灘背景
 # Esc: 關閉視窗
+# 
+# 
+# 要標記的圖片記得放在data/images資料夾內
+# dataset_10000_update_0912.xml記得要放在data資料夾中
+
 
 
 
