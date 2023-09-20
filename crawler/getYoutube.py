@@ -74,4 +74,4 @@ def getTextFromYtUrl(url):
 #         print(row_id, link)
 #         updateData("youtube", {"videoContent":getTextFromYtUrl(link)}, row_id)
 
-getTextFromYtUrl("https://www.youtube.com/watch?v=aL9odRg3hyA")
+print(getTextFromYtUrl("https://www.youtube.com/watch?v=aL9odRg3hyA"))

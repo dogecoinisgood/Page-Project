@@ -6,6 +6,13 @@ import os, cv2, time, threading
 
 
 
+# 操作說明
+# b: 上一張圖片
+# n: 下一張圖片
+# s: 儲存現在化的眶的座標到xml
+# d: 刪除現在的圖片
+
+
 label= ""
 target_file= ""
 
