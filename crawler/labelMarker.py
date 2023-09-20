@@ -12,10 +12,16 @@ import os, cv2, time, threading
 # s: 儲存現在化的眶的座標到xml
 # d: 刪除現在的圖片
 # f: (預定)自動填充沙灘背景
+# Esc: 關閉視窗
 
 
+
+# 現在要標記的種類(ex: WASTE_1)
 label= ""
+# 指定從哪個檔案開始，若沒設定，則為從低一張沒有標記的圖片開始
 target_file= ""
+
+
 
 base_path= os.path.abspath(os.path.dirname(__file__))
 
