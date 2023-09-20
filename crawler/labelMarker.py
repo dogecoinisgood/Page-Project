@@ -11,6 +11,7 @@ import os, cv2, time, threading
 # n: 下一張圖片
 # s: 儲存現在化的眶的座標到xml
 # d: 刪除現在的圖片
+# f: (預定)自動填充沙灘背景
 
 
 label= ""
