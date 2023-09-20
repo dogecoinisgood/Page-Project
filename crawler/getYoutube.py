@@ -67,11 +67,11 @@ def getTextFromYtUrl(url):
 
 
 
-# data= getData("youtube", "SELECT id,link,videoContent FROM youtube")
-# for row in data:
-#     row_id,link,videoContent= row
-#     if not videoContent:
-#         print(row_id, link)
-#         updateData("youtube", {"videoContent":getTextFromYtUrl(link)}, row_id)
+data= getData("youtube", "SELECT id,link,videoContent FROM youtube")
+for row in data:
+    row_id,link,videoContent= row
+    if not videoContent:
+        print(row_id, link)
+        updateData("youtube", {"videoContent":getTextFromYtUrl(link)}, row_id)
 
-print(getTextFromYtUrl("https://www.youtube.com/watch?v=aL9odRg3hyA"))
+# print(getTextFromYtUrl("https://www.youtube.com/watch?v=aL9odRg3hyA"))
