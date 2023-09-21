@@ -25,7 +25,7 @@ import os, cv2, time, threading
 
 
 # 指定從哪個檔案開始，若沒設定，則為從低一張沒有標記的圖片開始
-target_file= "waste_30_21.jpg"
+target_file= "waste_30_10你好.jpg"
 
 
 
