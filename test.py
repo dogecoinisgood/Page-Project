@@ -15,19 +15,4 @@
 
 
 
-db2_path= "crawler/data/data.db"
-
-
-
-import os, sqlite3
-
-
-base_path= os.path.abspath(os.path.dirname(__file__))
-
-
-# 取得db2的資料
-conn = sqlite3.connect(os.path.join(base_path,db2_path))
-cursor= conn.cursor()
-result= cursor.execute("SELECT title,description,link FROM youtube WHERE link='aa'")
-data2= result.fetchone()
-print(data2)
+print(list({'a':1,"b":2}.values())[0])

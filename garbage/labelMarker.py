@@ -9,8 +9,8 @@ import os, cv2, time, threading
 # 操作說明
 # 滑鼠左鍵: 拉框
 # 滑鼠右鍵: 清除所有的框
-# b: 上一張圖片
-# n: 下一張圖片
+# b: 上一張圖片(&自動儲存)
+# n: 下一張圖片(&自動儲存)
 # s: 儲存現在化的眶的座標到xml
 # d: 刪除現在的圖片
 # f: (預定)自動填充沙灘背景
@@ -23,8 +23,7 @@ import os, cv2, time, threading
 
 
 
-# 現在要標記的種類(ex: WASTE_1)。若無填寫，則為預設格式的檔案名稱(ex:WASTE_1-01.jpg)中"-"前半的部分(ex:WASTE_1)
-label= ""
+
 # 指定從哪個檔案開始，若沒設定，則為從低一張沒有標記的圖片開始
 target_file= ""
 
@@ -38,13 +37,12 @@ root = tree.getroot()
 
 
 # # XML ot DataFrame
-# {"name":name1, "width":"10", "height":"10", "polygon": [{"label":"WASTE_1","points":"xx,xx..."}, {"label":"WASTE_2","points":"yy,yy..."}]}
+# {"name":name1, "width":"10", "height":"10", "polygon": [{"WASTE_1":"xx,xx..."}, {"WASTE_2":"yy,yy..."}]}
 df= pd.DataFrame([
-        [image.attrib["name"], image.attrib["width"], image.attrib["height"], [{"label":polygon.attrib["label"], "points":polygon.attrib["points"]} for polygon in image]]
+        [image.attrib["name"], image.attrib["width"], image.attrib["height"], [{polygon.attrib["label"]:polygon.attrib["points"]} for polygon in image]]
     for image in root],
     columns=["name","width","height","polygon"]
 )
-
 
 # 找到所有放在待標記資料夾的圖片
 unMarkImages= os.listdir(base_path+"/data/images")
@@ -54,7 +52,7 @@ else:
     # 找到所有放在待標記資料夾的圖片中，第一個沒有標記的圖片編號
     nowImageNum= 0
     for i,image in enumerate(unMarkImages):
-        if image not in df["name"]:
+        if image not in df["name"].values:
             nowImageNum= i
             break
 # 讀取目標的圖片
@@ -63,14 +61,17 @@ img = cv2.imread((base_path+'/data/images/'+unMarkImages[nowImageNum]), cv2.IMRE
 
 # 紀錄左鍵按下，開始拖曳時的點
 dragPoint= None
-# 紀錄同一張圖的其他框
+# 紀錄同一張圖的其他框, rectangles= [{"WASTE_1":"xx,xx..."}, {"WASTE_2":"yy,yy..."}]
 rectangles= []
 def showRectangles():
     global rectangles, img
     img = cv2.imread((base_path+'/data/images/'+unMarkImages[nowImageNum]), cv2.IMREAD_COLOR)
     cv2.setWindowTitle('image', unMarkImages[nowImageNum])
-    for start,end in rectangles:
+    for polygon in rectangles:
+        label, points= list(polygon.keys())[0], list(polygon.values())[0]
+        start, end= points
         cv2.rectangle(img, start, end, (0,255,0), 2)
+        cv2.putText(img, label, start, None, 0.75,(0,0,255),2)
 
 
 def readRectanglesFromDf():
@@ -80,17 +81,18 @@ def readRectanglesFromDf():
     if not newSeries.empty:
         newSeries= newSeries.iloc[0]
         for polygon in newSeries['polygon']:
-            p0, _, _, p3= polygon["points"].split(";")
+            label, points= list(polygon.keys())[0], list(polygon.values())[0]
+            p0, _, _, p3= points.split(";")
             p0, p3= (int(p0.split(",")[0]), int(p0.split(",")[1])), (int(p3.split(",")[0]), int(p3.split(",")[1]))
-            rectangles.append([p0, p3])
-            cv2.rectangle(img, p0, p3, (0,255,0), 2)
+            rectangles.append({label:[p0, p3]})
     showRectangles()
 readRectanglesFromDf()
 
 
-#建立回调函数
+nowLabel= "WASTE_1"
+#滑鼠事件
 def OnMouseAction(event,x,y,flags,param):
-    global dragPoint, img, rectangles
+    global dragPoint, img, rectangles, nowLabel
     
     # 左鍵按下
     if event == cv2.EVENT_LBUTTONDOWN:
@@ -98,7 +100,8 @@ def OnMouseAction(event,x,y,flags,param):
     # 左鍵放開
     elif event == cv2.EVENT_LBUTTONUP:
         # 紀錄畫下的框
-        rectangles.append([(dragPoint[0],dragPoint[1]), (x,y)])
+        rectangles.append({nowLabel:[(dragPoint[0],dragPoint[1]), (x,y)]})
+        showRectangles()
         # 重設開始座標
         dragPoint= None
     # 左鍵拖曳
@@ -119,11 +122,12 @@ def saveXML():
     
     imgElement= ET.fromstring(f'<image name="{unMarkImages[nowImageNum]}" height="{img.shape[0]}" width="{img.shape[1]}"></image>')
     newDict= {"name":unMarkImages[nowImageNum],"width":img.shape[1],"height":img.shape[0], "polygon":[]}
-    for start,end in rectangles:
-        nowLabel= label if label else unMarkImages[nowImageNum].split("-")[0]
+    for polygon in rectangles:
+        label, points= list(polygon.keys())[0], list(polygon.values())[0]
+        start, end= points
         polygonElement= ET.fromstring(f'<polygon label="{label}" points="{start[0]},{start[1]};{start[0]},{end[1]};{end[0]},{start[1]};{end[0]},{end[1]}" />')
         imgElement.insert(-1, polygonElement)
-        newDict["polygon"].append({"label": label, "points":f"{start[0]},{start[1]};{start[0]},{end[1]};{end[0]},{start[1]};{end[0]},{end[1]}"})
+        newDict["polygon"].append({label: f"{start[0]},{start[1]};{start[0]},{end[1]};{end[0]},{start[1]};{end[0]},{end[1]}"})
     
     nowSeries= df.loc[df['name'] == unMarkImages[nowImageNum]]
     if nowSeries.empty:
@@ -156,6 +160,7 @@ def deleteImg():
 # 上/下一張圖片
 def changeImg(x):
     global nowImageNum
+    
     if x == -1:
         nowImageNum= nowImageNum-1 if nowImageNum>0 else 0
     elif x == 1:
@@ -164,12 +169,20 @@ def changeImg(x):
     readRectanglesFromDf()
 
 
+# 更改label
+def changeLabel(x):
+    global nowLabel
+    nowLabel= f"WASTE_{x}"
+
+
 
 cv2.namedWindow('image', cv2.WINDOW_NORMAL)
 cv2.setWindowTitle('image', unMarkImages[nowImageNum])
 cv2.setMouseCallback('image',OnMouseAction)
 cv2.createTrackbar('<-\t->','image',0,1, changeImg)
 cv2.setTrackbarMin('<-\t->', 'image', -1)
+cv2.createTrackbar('label','image',1,20, changeLabel)
+cv2.setTrackbarMin('label', 'image', 1)
 while(img.size!=0):
     key= cv2.waitKey(1)&0xFF
     if key == ord('s'):
