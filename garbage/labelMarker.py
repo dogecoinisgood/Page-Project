@@ -71,7 +71,8 @@ def showRectangles():
         label, points= list(polygon.keys())[0], list(polygon.values())[0]
         start, end= points
         cv2.rectangle(img, start, end, (0,255,0), 2)
-        cv2.putText(img, label, start, None, 0.75,(0,0,255),2)
+        cv2.putText(img, label, start, None, 0.75,(255,255,255),3)
+        cv2.putText(img, label, start, None, 0.75,(0,0,255), 2)
 
 
 def readRectanglesFromDf():
