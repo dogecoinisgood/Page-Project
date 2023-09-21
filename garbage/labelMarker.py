@@ -25,7 +25,7 @@ import os, cv2, time, threading
 
 
 # 指定從哪個檔案開始，若沒設定，則為從低一張沒有標記的圖片開始
-target_file= ""
+target_file= "waste_30_21.jpg"
 
 
 
@@ -56,7 +56,8 @@ else:
             nowImageNum= i
             break
 # 讀取目標的圖片
-img = cv2.imread((base_path+'/data/images/'+unMarkImages[nowImageNum]), cv2.IMREAD_COLOR)
+# img = cv2.imread((base_path+'/data/images/'+unMarkImages[nowImageNum]), cv2.IMREAD_COLOR)
+img= cv2.imdecode(np.fromfile((base_path+'/data/images/'+unMarkImages[nowImageNum]), dtype=np.int8), -1)
 
 
 # 紀錄左鍵按下，開始拖曳時的點
@@ -65,7 +66,8 @@ dragPoint= None
 rectangles= []
 def showRectangles():
     global rectangles, img
-    img = cv2.imread((base_path+'/data/images/'+unMarkImages[nowImageNum]), cv2.IMREAD_COLOR)
+    # img = cv2.imread((base_path+'/data/images/'+unMarkImages[nowImageNum]), cv2.IMREAD_COLOR)
+    img= cv2.imdecode(np.fromfile((base_path+'/data/images/'+unMarkImages[nowImageNum]), dtype=np.int8), -1)
     cv2.setWindowTitle('image', unMarkImages[nowImageNum])
     for polygon in rectangles:
         label, points= list(polygon.keys())[0], list(polygon.values())[0]
