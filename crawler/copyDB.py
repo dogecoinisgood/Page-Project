@@ -19,17 +19,17 @@ conn = sqlite3.connect(os.path.join(base_path,db2_path))
 cursor= conn.cursor()
 result= cursor.execute("SELECT title,description,link,videoContent FROM youtube")
 data2= result.fetchall()
-conn.close()
+# conn.close()
 
 # insert 進入db1
 conn = sqlite3.connect(os.path.join(base_path,db1_path))
 cursor= conn.cursor()
 
-for row in result:
+for row in data2:
     title2,description2,link2,videoContent2= row
     link2= link2.replace("'", "''")
     videoContent2= (videoContent2 or "").replace("'", "''")
-    result= cursor.execute(f"SELECT id,link,videoContent FROM youtube WHERE link='{videoContent2}';")
+    result= cursor.execute(f"SELECT id,link,videoContent FROM youtube WHERE link='{link2}';").fetchone()
     # 如果db1根本沒有這一筆資料，就從db2插入
     if not result:
         title2= title2.replace("'", "''")
