@@ -179,14 +179,20 @@ def deleteImg():
 
 # 上/下一張圖片
 def changeImg(x):
-    global nowImageNum
+    global unMarkImages,nowImageNum
+    
+    # 避免cv2.setTrackbarPos(.., .., 0)的時候，又觸發一次此函式。
+    if x == 0:
+        return
     
     if x == -1:
         nowImageNum= nowImageNum-1 if nowImageNum>0 else 0
     elif x == 1:
         nowImageNum= nowImageNum+1 if (nowImageNum<len(unMarkImages)-1) else len(unMarkImages)-1
+    
     cv2.setTrackbarPos('<-\t->', 'image', 0)
     readRectanglesFromDf()
+    print(nowImageNum, unMarkImages[nowImageNum])
 
 
 # 更改label
