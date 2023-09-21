@@ -40,7 +40,7 @@ for row in data2:
         id1,link1,videoContent1= result
         # 如果已經有這筆資料，若db1的videoContent為空，則從db2抓取
         if not videoContent1:
-            cursor.execute(f"UPDATE youtube SET videoContent='{videoContent2}' WHERE link={link2};")
+            cursor.execute(f"UPDATE youtube SET videoContent='{videoContent2}' WHERE link='{link2}';")
 conn.commit()
 conn.close()
 
