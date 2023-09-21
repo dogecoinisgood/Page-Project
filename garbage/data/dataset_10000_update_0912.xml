@@ -33962,14 +33962,4 @@
         <polygon label="WASTE_1" points="134,377;134,968;372,377;372,968" />
         <polygon label="WASTE_4" points="661,486;661,916;983,486;983,916" />
     </image>
-    <image height="1478" id="3e503c99-8ff4-4e22-935d-e07b59cb5ea4" name="20221019_&#26032;&#21271;&#24066;-&#37329;&#23665;-C084.jpg" width="1108">
-        <polygon label="WASTE_12" points="519,644;519,949;651,644;651,949" />
-        <polygon label="WASTE_20" points="1025,1278;1025,1371;1108,1278;1108,1371" />
-    </image>
-    <image name="waste_30_0.jpg" height="403" width="600"><polygon label="WASTE_4" points="347,204;347,295;444,204;444,295" /><polygon label="WASTE_8" points="121,250;121,307;183,250;183,307" /><polygon label="WASTE_1" points="109,119;109,185;194,119;194,185" /></image><image height="1478" id="73c77542-5285-465d-bf9d-99737168e192" name="20221019_&#26032;&#21271;&#24066;-&#37329;&#23665;-C085.jpg" width="1108">
-        <polygon label="WASTE_20" points="412,425;412,874;864,425;864,874" />
-        <polygon label="WASTE_14" points="1006,278;1006,319;1027,278;1027,319" />
-        <polygon label="WASTE_20" points="330,212;330,279;401,212;401,279" />
-        <polygon label="WASTE_20" points="0,135;0,202;69,135;69,202" />
-    </image>
-</annotations>
+    <image name="waste_30_10&#20320;&#22909;.jpg" height="660" width="990"><polygon label="WASTE_1" points="635,212;818,212;818,351;635,351" /><polygon label="WASTE_1" points="183,239;372,239;372,393;183,393" /></image><image name="waste_30_1.jpg" height="471" width="800"><polygon label="WASTE_1" points="295,131;445,131;445,248;295,248" /></image><image name="waste_30_10&#20320;&#22909;.jpg" height="660" width="990"><polygon label="WASTE_1" points="635,212;818,212;818,351;635,351" /><polygon label="WASTE_1" points="504,435;588,435;588,497;504,497" /><polygon label="WASTE_1" points="183,239;372,239;372,393;183,393" /></image></annotations>

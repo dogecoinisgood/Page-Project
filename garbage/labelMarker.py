@@ -71,10 +71,11 @@ def showRectangles():
     cv2.setWindowTitle('image', unMarkImages[nowImageNum])
     for polygon in rectangles:
         label, points= list(polygon.keys())[0], list(polygon.values())[0]
-        start, end= points
-        cv2.rectangle(img, start, end, (0,255,0), 2)
-        cv2.putText(img, label, start, None, 0.75,(255,255,255),3)
-        cv2.putText(img, label, start, None, 0.75,(0,0,255), 2)
+        # start, end= points
+        # cv2.rectangle(img, start, end, (0,255,0), 2)
+        cv2.polylines(img, points, 1, (0, 255, 0), 5)
+        cv2.putText(img, label, points[0][0], None, 0.75,(255,255,255),3)
+        cv2.putText(img, label, points[0][0], None, 0.75,(0,0,255), 2)
 
 
 def readRectanglesFromDf():
@@ -85,9 +86,10 @@ def readRectanglesFromDf():
         newSeries= newSeries.iloc[0]
         for polygon in newSeries['polygon']:
             label, points= list(polygon.keys())[0], list(polygon.values())[0]
-            p0, _, _, p3= points.split(";")
-            p0, p3= (int(p0.split(",")[0]), int(p0.split(",")[1])), (int(p3.split(",")[0]), int(p3.split(",")[1]))
-            rectangles.append({label:[p0, p3]})
+            # p0, _, _, p3= points.split(";")
+            # p0, p3= (int(p0.split(",")[0]), int(p0.split(",")[1])), (int(p3.split(",")[0]), int(p3.split(",")[1]))
+            # rectangles.append({label:[p0, p3]})
+            rectangles.append({label: np.array([[[dot for dot in point.split(",")] for point in points.split(";")]], dtype=np.int32)})
     showRectangles()
 readRectanglesFromDf()
 
@@ -103,7 +105,8 @@ def OnMouseAction(event,x,y,flags,param):
     # 左鍵放開
     elif event == cv2.EVENT_LBUTTONUP:
         # 紀錄畫下的框
-        rectangles.append({nowLabel:[(dragPoint[0],dragPoint[1]), (x,y)]})
+        # rectangles.append({nowLabel:[(dragPoint[0],dragPoint[1]), (x,y)]})
+        rectangles.append({nowLabel:np.array([[[dragPoint[0],dragPoint[1]], [x,dragPoint[1]], [x,y], [dragPoint[0],y]]],dtype=np.int32)})
         showRectangles()
         # 重設開始座標
         dragPoint= None
@@ -127,10 +130,13 @@ def saveXML():
     newDict= {"name":unMarkImages[nowImageNum],"width":img.shape[1],"height":img.shape[0], "polygon":[]}
     for polygon in rectangles:
         label, points= list(polygon.keys())[0], list(polygon.values())[0]
-        start, end= points
-        polygonElement= ET.fromstring(f'<polygon label="{label}" points="{start[0]},{start[1]};{start[0]},{end[1]};{end[0]},{start[1]};{end[0]},{end[1]}" />')
+        # start, end= points
+        # polygonElement= ET.fromstring(f'<polygon label="{label}" points="{start[0]},{start[1]};{start[0]},{end[1]};{end[0]},{start[1]};{end[0]},{end[1]}" />')
+        points= [f"{point[0]},{point[1]}" for point in points[0]]
+        polygonElement= ET.fromstring(f'<polygon label="{label}" points="{";".join(points)}" />')
         imgElement.insert(-1, polygonElement)
-        newDict["polygon"].append({label: f"{start[0]},{start[1]};{start[0]},{end[1]};{end[0]},{start[1]};{end[0]},{end[1]}"})
+        # newDict["polygon"].append({label: f"{start[0]},{start[1]};{start[0]},{end[1]};{end[0]},{start[1]};{end[0]},{end[1]}"})
+        newDict["polygon"].append({label: f"{';'.join(points)}"})
     
     nowSeries= df.loc[df['name'] == unMarkImages[nowImageNum]]
     if nowSeries.empty:
