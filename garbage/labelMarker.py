@@ -45,7 +45,7 @@ df= pd.DataFrame([
 )
 
 # 找到所有放在待標記資料夾的圖片
-unMarkImages= os.listdir(base_path+"/data/images")
+unMarkImages= sorted(os.listdir(base_path+"/data/images"))
 # 如果有寫target_file，則直接抓取該檔案的index，並從該張圖片開始
 if target_file:
     nowImageNum= unMarkImages.index(target_file)
