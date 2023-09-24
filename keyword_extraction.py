@@ -1,3 +1,5 @@
+# ckiptagger: 中研院開發之繁體中文專用斷詞程式；功能與jieba類似
+
 import os, re
 from ckiptagger import WS, POS, NER
 from db import getData
@@ -9,13 +11,13 @@ from sklearn.feature_extraction.text import TfidfTransformer
 
 
 corpus= getData("youtube","SELECT videoContent FROM youtube")
-corpus= [row[0] for row in corpus][:20]  # 取用幾篇文本
+corpus= [row[0] for row in corpus][:20]  # [:N] 取用N篇文本
 
 # 導入CKIPtagger 斷詞模型
 ws = WS('.')
 
 # 讀取文本（corpus）
-# path = r'C:\Users\User\Desktop\cosmetic_1.txt'
+# path = r'C:\Users\User\Desktop\cosmetic_1.txt'  # 測試單一一篇文本時使用此區塊
 # with open(path, 'r', encoding='utf-8') as f :
 #     corpus = f.readlines()
 
@@ -49,7 +51,7 @@ for c in cut_corpus:
 # ----------------------------------------------------------------------------------------------------------------------- #
 
 
-# 讀取 stop-words.txt
+# 讀取 stop-words.txt  # 此處為網友提供之個人stopwords詞庫
 with open(r'C:\Users\User\Desktop\stop_words.txt', encoding='utf-8') as f:
     stop_word = f.read()
 
@@ -60,24 +62,24 @@ sw = stop_word.split('\n')
 # ----------------------------------------------------------------------------------------------------------------------- #
 
 
-text_cv = CountVectorizer(max_df=1.0, min_df=0.7, stop_words=sw)  # 某 term 出現在總文本的比率若超過 > 80% or < 50% 就剔除
+text_cv = CountVectorizer(max_df=0.8, min_df=0.5, stop_words=sw)  # 某 term 出現在總文本的比率若超過 > 80% or < 50% 就剔除
 
 td_matrix = text_cv.fit_transform(cut_corpus)
 
 print(td_matrix.shape)
-# result >> (12,7)  # 12個句子(文本)，共提出7個關鍵字
+# result >> (12,7)  # 12個句子(文本)，共提出7個關鍵字 # example
 
 print(text_cv.vocabulary_.keys())
 print(text_cv.vocabulary_)
 print(sorted(text_cv.vocabulary_.items(), key=lambda x:x[1], reverse=True))
-# result >> dict_keys(['韓國瑜', '夫婦', '房產', '韓氏', '雲林', '韓辦', '貸款'])
+# result >> dict_keys(['韓國瑜', '夫婦', '房產', '韓氏', '雲林', '韓辦', '貸款'])  # example
 
 print(len(text_cv.vocabulary_.keys()))
-# result >> 7  # 儲存關鍵字的dictionary的長度(含有幾個元素)
+# result >> 7  # 儲存關鍵字的dictionary的長度(含有幾個元素)  # example
 
 
 # # ----------------------------------------------------------------------------------------------------------------------- #
-# 以下應用層面: 了解優質業配文，使用這個關鍵字的權重
+# 以下測試出現錯誤，待調整。潛在應用: 了解優質業配文，使用這個關鍵字的權重
 
 
 # tfidf = TfidfTransformer()
