@@ -15,7 +15,7 @@ data= [row[0] for row in data]
 
 
 
-Markov= {}
+hMarkov= {}
 lastGramFreqs= {}
 for i in range(5):
     contentGramFreqs= None
@@ -28,12 +28,12 @@ for i in range(5):
     
     if lastGramFreqs:
         for gramFreq in contentGramFreqs:
-            Markov[gramFreq]= contentGramFreqs[gramFreq]/ lastGramFreqs[gramFreq[:-1]]
+            hMarkov[gramFreq]= contentGramFreqs[gramFreq]/ lastGramFreqs[gramFreq[:-1]]
     
     lastGramFreqs= contentGramFreqs
 
-Markov= dict(sorted(Markov.items(), key=lambda x:x[1], reverse=True))
+hMarkov= dict(sorted(hMarkov.items(), key=lambda x:x[1], reverse=True))
 
-for i,m in enumerate(Markov):
+for i,m in enumerate(hMarkov):
     if i < 10:
-        print(m, Markov[m])
+        print(m, hMarkov[m])
