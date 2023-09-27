@@ -48,7 +48,7 @@ def getTextFromYtUrl(url):
     # 計算時間用1
     startTime= datetime.datetime.now()
     
-    # pytube無法解析串流解決方案
+    # pytube無法解析串流解決方案(套用前面的補釘function)
     with mock.patch("pytube.cipher.get_throttling_plan", patched_throttling_plan):
         youtube= YouTube(url)
         audio= youtube.streams.filter(only_audio=True).first()
