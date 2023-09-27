@@ -25,6 +25,7 @@ for wordNum in range(1,wordMaxLen+1):
     # 將data中所有文章的i字Counter都集合起來
     contentGramFreqs= collections.Counter()
     for content in data:
+        # 把content中的每個字都拆開，變成一個list後，再丟給ngrams
         contentGramFreqs+= collections.Counter(ngrams([*content], wordNum))
     
     # 從有了lastGramFreqs的第2個迴圈開始，都要逐詞進行比對
