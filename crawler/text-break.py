@@ -34,10 +34,11 @@ for wordNum in range(1,wordMaxLen+1):
             # 將出現次數少於(文章數*0.5)次的字詞排除掉
             if contentGramFreqs[gramFreq] >= len(data)*threshold:
                 # ex: 所有文章中，'屈臣氏'出現的次數/'屈臣'出現的次數(*暫時稱為馬可夫機率)。這個數值越接近1，代表越有可能是一個不可分割的詞
-                # hMarkov[gramFreq]= contentGramFreqs[gramFreq]/ gramFreqs[gramFreq[:-1]]
-                # 但是像'我覺得'.'覺得比較'之類的東西，在樣本數多的時候不怎麼會出現，但是樣本數少的時候就有可能沒有被篩選掉，所以這邊是將字詞再做更多輪的比對
-                # ex: '屈臣氏'出現的次數要除以'屈臣'的次數，以及'屈'的次數，再將兩者做平均
-                # ex: '覺得比較'出現的次數要除以'覺得比'&'覺得'&'覺'的次數，再將三者做平均
+                # hMarkov[gramFreq]= contentGramFreqs[gramFreq]/ freqs[gramFreq[:-1]]
+                # 但是像'的感覺'.'覺得比較'之類的東西，在樣本數多的時候不怎麼會出現，但是樣本數少的時候就有可能沒有被篩選掉，所以這邊是將字詞再做更多輪的比對
+                # ex: '屈臣氏'出現的次數要除以'屈臣'的次數，以及'屈'的次數，再將兩者做平均 (/'屈臣'後的數值高，/'屈'後的數值也同樣高，故不會被篩選掉)
+                # ex: '的感覺'出現的次數要除以'的感'的次數，以及'覺'的次數，再將兩者做平均 (/'的感'後的數值高，/'的'後的數值超低，故會被篩選掉)
+                # ex: '但我覺得'出現的次數要除以'但我覺'(超高)&'但我'(高)&'但'(超低)的次數，再將三者做平均
                 hMarkovPossible= []
                 for splitNum in range(1, wordNum):
                     hMarkovPossible.append(contentGramFreqs[gramFreq]/ freqs[gramFreq[:-splitNum]])
