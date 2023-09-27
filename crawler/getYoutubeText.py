@@ -15,7 +15,7 @@ base_path= os.path.abspath(os.path.dirname(__file__))
 
 
 
-# pytube無法解析串流解決方案
+# pytube無法解析串流解決補釘
 import mock
 from pytube.cipher import get_throttling_function_code
 def patched_throttling_plan(js: str):
@@ -39,7 +39,6 @@ def patched_throttling_plan(js: str):
             transform_steps.append((match[0],match[1],match[4]))
         else:
             transform_steps.append((match[0],match[1]))
-
     return transform_steps
 
 
