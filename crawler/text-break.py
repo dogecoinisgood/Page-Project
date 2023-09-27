@@ -54,5 +54,5 @@ hMarkov= dict(sorted(hMarkov.items(), key=lambda x:x[1], reverse=True))
 
 for i,m in enumerate(hMarkov):
     if i < 100:
-        print(m, hMarkov[m])
+        print(m, "\t馬可夫機率:", hMarkov[m], "\t出現次數", freqs[m])
 
