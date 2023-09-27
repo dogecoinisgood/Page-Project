@@ -13,12 +13,45 @@ from db import *
 # base_path= "/content/drive/Mydrive/.../page-Project/crawler"
 base_path= os.path.abspath(os.path.dirname(__file__))
 
+
+
+# pytube無法解析串流解決方案
+import mock
+from pytube.cipher import get_throttling_function_code
+def patched_throttling_plan(js: str):
+    """Patch throttling plan, from https://github.com/pytube/pytube/issues/1498"""
+    raw_code = get_throttling_function_code(js)
+
+    transform_start = r"try{"
+    plan_regex = re.compile(transform_start)
+    match = plan_regex.search(raw_code)
+
+    #transform_plan_raw = find_object_from_startpoint(raw_code, match.span()[1] - 1)
+    transform_plan_raw = js
+
+    # Steps are either c[x](c[y]) or c[x](c[y],c[z])
+    step_start = r"c\[(\d+)\]\(c\[(\d+)\](,c(\[(\d+)\]))?\)"
+    step_regex = re.compile(step_start)
+    matches = step_regex.findall(transform_plan_raw)
+    transform_steps = []
+    for match in matches:
+        if match[4] != '':
+            transform_steps.append((match[0],match[1],match[4]))
+        else:
+            transform_steps.append((match[0],match[1]))
+
+    return transform_steps
+
+
+
 def getTextFromYtUrl(url):
     # 計算時間用1
     startTime= datetime.datetime.now()
-
-    youtube= YouTube(url)
-    audio= youtube.streams.filter(only_audio=True).first()
+    
+    # pytube無法解析串流解決方案
+    with mock.patch("pytube.cipher.get_throttling_plan", patched_throttling_plan):
+        youtube= YouTube(url)
+        audio= youtube.streams.filter(only_audio=True).first()
 
     # 下載成檔案(測試用)
     # out_file= audio.download()
@@ -56,7 +89,7 @@ def getTextFromYtUrl(url):
     # 將現在的音檔匯出成mp3(測試用)
     # audio.export("audio2.mp3", format="mp3")
 
-    model = whisper.load_model('large', download_root=base_path+'/data/whisper_model', device="cuda")
+    model = whisper.load_model('tiny', download_root=base_path+'/data/whisper_model') #, device="cuda")
     # result = model.transcribe(audio, language='zh', initial_prompt='請以專業美妝部落客的身分，給我繁體中文的語音辨識')
     result = model.transcribe(audio, language='zh', initial_prompt='請給我繁體中文的語音辨識 海綿寶寶 派大星 章魚哥 野海熊 海犀牛')
 
@@ -67,11 +100,11 @@ def getTextFromYtUrl(url):
 
 
 
-data= getData("youtube", "SELECT id,link,videoContent FROM youtube")
-for row in data:
-    row_id,link,videoContent= row
-    if not videoContent:
-        print(row_id, link)
-        updateData("youtube", {"videoContent":getTextFromYtUrl(link)}, row_id)
+# data= getData("youtube", "SELECT id,link,videoContent FROM youtube")
+# for row in data:
+#     row_id,link,videoContent= row
+#     if not videoContent:
+#         print(row_id, link)
+#         updateData("youtube", {"videoContent":getTextFromYtUrl(link)}, row_id)
 
-# print(getTextFromYtUrl("https://www.youtube.com/watch?v=aL9odRg3hyA"))
+print(getTextFromYtUrl("https://www.youtube.com/watch?v=aL9odRg3hyA"))
