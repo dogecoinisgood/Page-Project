@@ -9,35 +9,41 @@ from db import *
 
 
 
+# 要抓取的最大字詞長度
+wordMaxLen= 5
+# 最低出現次數(平均每篇文章要有0.5次)
+threshold= 0.5
+
+
 data= getData("youtube", "SELECT videoContent FROM youtube")
 data= [row[0] for row in data]
 
 
-
-
 hMarkov= {}
-lastGramFreqs= {}
-for i in range(5):
+freqs= {}
+for wordNum in range(1,wordMaxLen+1):
     # 將data中所有文章的i字Counter都集合起來
     contentGramFreqs= collections.Counter()
     for content in data:
-        gramFreqs= collections.Counter(ngrams([*content], i))
-        contentGramFreqs+= gramFreqs
+        contentGramFreqs+= collections.Counter(ngrams([*content], wordNum))
     
     # 從有了lastGramFreqs的第2個迴圈開始，都要逐詞進行比對
-    if lastGramFreqs:
+    if freqs:
         for gramFreq in contentGramFreqs:
             # 將出現次數少於(文章數*0.5)次的字詞排除掉
-            if contentGramFreqs[gramFreq] >= len(data)/2:
+            if contentGramFreqs[gramFreq] >= len(data)*threshold:
                 # ex: 所有文章中，'屈臣氏'出現的次數/'屈臣'出現的次數(*暫時稱為馬可夫機率)。這個數值越接近1，代表越有可能是一個不可分割的詞
-                hMarkov[gramFreq]= contentGramFreqs[gramFreq]/ lastGramFreqs[gramFreq[:-1]]
-                
-                # ex: 如果'屈臣'的馬可夫機率與'屈臣氏'很接近，那就把'屈臣'pop掉，保留'屈臣氏'就好
-                if gramFreq[:-1] in hMarkov.keys() and hMarkov[gramFreq]/ hMarkov[gramFreq[:-1]] >=0.8:
-                    hMarkov.pop(gramFreq[:-1])
+                # hMarkov[gramFreq]= contentGramFreqs[gramFreq]/ gramFreqs[gramFreq[:-1]]
+                # 但是像'我覺得'.'覺得比較'之類的東西，在樣本數多的時候不怎麼會出現，但是樣本數少的時候就有可能沒有被篩選掉，所以這邊是將字詞再做更多輪的比對
+                # ex: '屈臣氏'出現的次數要除以'屈臣'的次數，以及'屈'的次數，再將兩者做平均
+                # ex: '覺得比較'出現的次數要除以'覺得比'&'覺得'&'覺'的次數，再將三者做平均
+                hMarkovPossible= []
+                for splitNum in range(1, wordNum):
+                    hMarkovPossible.append(contentGramFreqs[gramFreq]/ freqs[gramFreq[:-splitNum]])
+                hMarkov[gramFreq]= sum(hMarkovPossible)/len(hMarkovPossible)
                 
     # 將這一個迴圈所做的(i字)counter，留到下一個迴圈，以供下一個迴圈(i+1字)的比對
-    lastGramFreqs= contentGramFreqs
+    freqs= {**freqs, **contentGramFreqs}
 
 # 按照馬可夫機率排序
 hMarkov= dict(sorted(hMarkov.items(), key=lambda x:x[1], reverse=True))

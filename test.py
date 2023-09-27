@@ -16,3 +16,4 @@
 
 
 print(list({'a':1,"b":2}.values())[0])
+print([i for i in range(5)])
