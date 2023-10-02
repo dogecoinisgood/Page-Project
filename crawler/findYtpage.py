@@ -174,7 +174,6 @@ def findRelated(href ,num:int):
             firefox.switch_to.window(window_name=windowName)
             firefox.close()
             firefox.switch_to.window(window_name=firefox.window_handles[-1])
-            print()
             # print 錯第幾行
             exc_type, exc_obj, exc_tb = sys.exc_info()
             fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
