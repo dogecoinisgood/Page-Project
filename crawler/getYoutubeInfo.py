@@ -60,14 +60,36 @@ def getInfoFromYtUrl(url):
     description= description.get_attribute("textContent").strip() or ""
     
     
-    likes = firefox.find_element(By.XPATH, '/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[2]/div/div/ytd-menu-renderer/div[1]/ytd-segmented-like-dislike-button-renderer/yt-smartimation/div/div[1]/ytd-toggle-button-renderer/yt-button-shape/button/div[2]')
-    dislikes= WebDriverWait(firefox, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[2]/div/div/ytd-menu-renderer/div[1]/ytd-segmented-like-dislike-button-renderer/yt-smartimation/div/div[2]/ytd-toggle-button-renderer/yt-button-shape/button")))
+    # 抓取like
+    likes = WebDriverWait(firefox, 5).until(EC.presence_of_element_located((By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[2]/div/div/ytd-menu-renderer/div[1]/ytd-segmented-like-dislike-button-renderer/yt-smartimation/div/div[1]/ytd-toggle-button-renderer/yt-button-shape/button/div[2]")))
+    likes= likes.text
+    if "萬" in likes: likes= int(float(likes.replace("萬",""))*10000)
+    elif "億" in likes: likes= int(float(likes.replace("億",""))*100000000)
+    elif likes.isdigit(): likes= int(likes)
+    else: likes= 0
+    # dislikes(要wait載入插件)
+    dislikes= WebDriverWait(firefox, 5).until(EC.presence_of_element_located((By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[2]/div/div/ytd-menu-renderer/div[1]/ytd-segmented-like-dislike-button-renderer/yt-smartimation/div/div[2]/ytd-toggle-button-renderer/yt-button-shape/button")))
+    dislikes= dislikes.text
+    if "萬" in dislikes: dislikes= int(float(dislikes.replace("萬",""))*10000)
+    elif "億" in dislikes: dislikes= int(float(dislikes.replace("億",""))*100000000)
+    elif dislikes.isdigit(): dislikes= int(dislikes)
+    else: dislikes= 0
+    # 抓取views
     views= firefox.find_element(By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[4]/div[1]/div/div[1]/yt-formatted-string/span[1]")
+    views= int( views.text.replace("觀看次數：",'').replace("次",'').replace(",",''))
+    # 抓取subscribers
     subscribers= firefox.find_element(By.XPATH, "//*[@id='owner-sub-count']")
+    subscribers= subscribers.text.replace("位訂閱者","")
+    if "萬" in subscribers: subscribers= int(float(subscribers.replace("萬",""))*10000)
+    elif "億" in subscribers: subscribers= int(float(subscribers.replace("億",""))*100000000)
+    else: subscribers= int(subscribers)
+    # 抓取channel
     channel= firefox.find_element(By.XPATH, "//*[@id='text']/a")
+    channel_name= channel.text
+    channel_id= channel.get_attribute("href").replace("https://www.youtube.com/",'')
     
     # channel_name, channel_id, subscribers, views, likes, dislikes
-    return channel.text, channel.get_attribute("href").replace("https://www.youtube.com/",''), subscribers.text.replace("位訂閱者",""), views.text.replace("觀看次數：",'').replace("次",'').replace(",",''), likes.text, dislikes.text
+    return channel_name, channel_id, subscribers, views, likes, dislikes
 
 
 
@@ -79,9 +101,7 @@ for row in data:
     row_id,link= row
     
     channel_name, channel_id, subscribers, views, likes, dislikes= getInfoFromYtUrl(link)
-    if "萬" in subscribers: subscribers= int(float(subscribers.replace("萬",""))*10000)
-    elif "億" in subscribers: subscribers= int(float(subscribers.replace("億",""))*100000000)
     
-    updateData("youtube", {"channel_name":channel_name, "channel_id":channel_id, "subscribers":subscribers, "views":int(views), "likes":int(likes), "dislikes":int(dislikes)}, row_id)
+    updateData("youtube", {"channel_name":channel_name, "channel_id":channel_id, "subscribers":subscribers, "views":views, "likes":likes, "dislikes":dislikes}, row_id)
 
 # print(getInfoFromYtUrl("https://www.youtube.com/watch?v=aL9odRg3hyA"))

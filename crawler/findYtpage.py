@@ -21,7 +21,7 @@ updateCols("youtube", {"channel_name":"TEXT", "channel_ID":"TEXT", "subscribers"
 
 keywords= "美食 健身 網球 汽車"
 # 最少要多少筆搜尋結果(&搜尋的時候的最大捲動次數)
-firstSearchResult= 1000000
+firstSearchResult= 100
 # 最大關聯層數(設1:只抓搜尋結果，不抓關聯影片)
 relatedStack= 100
 
@@ -40,6 +40,7 @@ options.add_argument("--disable-notifications")
 firefox= webdriver.Firefox(service=service, options=options)
 # 隱含等待: 等待網頁載入完成後，再執行下面的程式，且只需設定一次，下面再有仔入網頁的動作時，無須再次設定，也會等待(最多10秒)網頁在入後再執行
 firefox.implicitly_wait(5)
+
 # 安裝return youtube dislike插件(firefox)
 firefox.install_addon(os.path.abspath(os.path.dirname(__file__)+"/data/return dislike/return_dislike.xpi"), temporary=True)
 # 安裝插件完後，從插件的分頁跳回原本的分頁
@@ -93,7 +94,13 @@ def findRelated(href ,num:int):
     
     if num>0:
         try:
-            firefox.get(href)
+            # firefox.get(href)
+            # 改成開新分頁，看完再關掉這個分頁，以節省記憶體
+            firefox.execute_script(f"window.open('{href}');")
+            windowName= firefox.window_handles[-1]
+            firefox.switch_to.window(window_name=windowName)
+            
+            
             # 確認title載入後，獲取title的文字
             title= WebDriverWait(firefox, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "h1.style-scope.ytd-watch-metadata")))
             title= title.get_attribute("textContent").strip() or ""
@@ -106,22 +113,38 @@ def findRelated(href ,num:int):
             description= description.find_element(By.CSS_SELECTOR, "yt-attributed-string:not(#attributed-snippet-text)")
             description= description.get_attribute("textContent").strip() or ""
             
-            # 抓取like, dislikes(要wait載入插件), views, subscribers, channel
-            likes = firefox.find_element(By.XPATH, '/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[2]/div/div/ytd-menu-renderer/div[1]/ytd-segmented-like-dislike-button-renderer/yt-smartimation/div/div[1]/ytd-toggle-button-renderer/yt-button-shape/button/div[2]')
-            likes= int(likes.text)
+            # 抓取like
+            likes= WebDriverWait(firefox, 5).until(EC.presence_of_element_located((By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[2]/div/div/ytd-menu-renderer/div[1]/ytd-segmented-like-dislike-button-renderer/yt-smartimation/div/div[1]/ytd-toggle-button-renderer/yt-button-shape/button/div[2]")))
+            likes= likes.text
+            if "萬" in likes: likes= int(float(likes.replace("萬",""))*10000)
+            elif "億" in likes: likes= int(float(likes.replace("億",""))*100000000)
+            elif likes.isdigit(): likes= int(likes)
+            else: likes= 0
+            # dislikes(要wait載入插件)
             dislikes= WebDriverWait(firefox, 5).until(EC.presence_of_element_located((By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[2]/div/div/ytd-menu-renderer/div[1]/ytd-segmented-like-dislike-button-renderer/yt-smartimation/div/div[2]/ytd-toggle-button-renderer/yt-button-shape/button")))
-            dislikes= int(dislikes.text)
+            dislikes= dislikes.text
+            if "萬" in dislikes: dislikes= int(float(dislikes.replace("萬",""))*10000)
+            elif "億" in dislikes: dislikes= int(float(dislikes.replace("億",""))*100000000)
+            elif dislikes.isdigit(): dislikes= int(dislikes)
+            else: dislikes= 0
+            # 抓取views
             views= firefox.find_element(By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[4]/div[1]/div/div[1]/yt-formatted-string/span[1]")
             views= int( views.text.replace("觀看次數：",'').replace("次",'').replace(",",''))
+            # 抓取subscribers
             subscribers= firefox.find_element(By.XPATH, "//*[@id='owner-sub-count']")
             subscribers= subscribers.text.replace("位訂閱者","")
             if "萬" in subscribers: subscribers= int(float(subscribers.replace("萬",""))*10000)
             elif "億" in subscribers: subscribers= int(float(subscribers.replace("億",""))*100000000)
             else: subscribers= int(subscribers)
+            # 抓取channel
             channel= firefox.find_element(By.XPATH, "//*[@id='text']/a")
             channel_name= channel.text
             channel_id= channel.get_attribute("href").replace("https://www.youtube.com/",'')
             
+            # 關閉分頁
+            firefox.switch_to.window(window_name=windowName)
+            firefox.close()
+            firefox.switch_to.window(window_name=firefox.window_handles[-1])
             
             print(title)
             print("----")
@@ -147,7 +170,15 @@ def findRelated(href ,num:int):
                         candidates.append(result)
                         findRelated(result, num-1)
         except Exception as e:
-            print(e)
+            # 關閉分頁
+            firefox.switch_to.window(window_name=windowName)
+            firefox.close()
+            firefox.switch_to.window(window_name=firefox.window_handles[-1])
+            print()
+            # print 錯第幾行
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            print(exc_type, fname, exc_tb.tb_lineno, e)
             return
 
     # firefox.quit()
