@@ -8,7 +8,7 @@ from xml.dom import minidom
 imgs = os.listdir(os.path.abspath(os.path.dirname(__file__))+'/garbageImg/Syringe/Syringe2\test\train/images') 
 # root = ET.Element("annotations")建立新的檔案
 #讀取文件
-tree = ET.parse("garbageXml/dataset_10000_update_09222.xml")
+tree = ET.parse("garbageXml/dataset_10000_update_0912.xml")
 #讀取文件的根目錄
 root = tree.getroot()
 
