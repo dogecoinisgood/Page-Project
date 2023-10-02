@@ -128,7 +128,7 @@ def findRelated(href ,num:int):
             
             # 如果title或description中有包含關鍵字，就儲存到資料庫，並開始找相關連結
             reStr= f"({'|'.join(keywords.strip().split())})"
-            print(reStr, re.search(reStr, title+description))
+            
             if re.search(reStr, title+description):
                 # 確認此連結不在資料庫裡，再新增
                 if getData("youtube", "SELECT link FROM youtube WHERE link='{}';".format(href.replace("'", "''")))==[]:

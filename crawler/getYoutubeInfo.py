@@ -32,7 +32,7 @@ options.add_argument("--disable-notifications")
 
 
 firefox= webdriver.Firefox(service=service, options=options)
-# 隱含等待: 等待網頁載入完成後，再執行下面的程式，且只需設定一次，下面再有仔入網頁的動作時，無須再次設定，也會等待(最多10秒)網頁在入後再執行
+# 隱含等待: 等待網頁載入完成後，再執行下面的程式，且只需設定一次，下面再有仔入網頁的動作時，無須再次設定，也會等待(最多5秒)網頁在入後再執行
 firefox.implicitly_wait(5)
 # 安裝return youtube dislike插件(firefox)
 firefox.install_addon(os.path.abspath(os.path.dirname(__file__)+"/data/return dislike/return_dislike.xpi"), temporary=True)
