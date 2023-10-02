@@ -27,12 +27,15 @@ options = Options()
 # options.add_argument("--headless")
 # 禁用通知
 options.add_argument("--disable-notifications")
+# 安裝return youtube dislike插件(chrome)
+# options.add_extension(os.path.abspath(os.path.dirname(__file__)+'data/return dislike/return_dislike_chrome.crx'))
+
 
 firefox= webdriver.Firefox(service=service, options=options)
 # 隱含等待: 等待網頁載入完成後，再執行下面的程式，且只需設定一次，下面再有仔入網頁的動作時，無須再次設定，也會等待(最多10秒)網頁在入後再執行
 firefox.implicitly_wait(5)
-# 安裝return youtube dislike插件
-firefox.install_addon("data/return dislike/return_dislike.xpi", temporary=True)
+# 安裝return youtube dislike插件(firefox)
+firefox.install_addon(os.path.abspath(os.path.dirname(__file__)+"/data/return dislike/return_dislike.xpi"), temporary=True)
 # 安裝插件完後，從插件的分頁跳回原本的分頁
 if len(firefox.window_handles) > 1:
     for i,window in enumerate(firefox.window_handles):

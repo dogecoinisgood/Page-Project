@@ -12,7 +12,13 @@ createTableText= {
         description TEXT,
         link TEXT,
         company TEXT,
-        videoContent TEXT
+        videoContent TEXT,
+        channel_name TEXT,
+        channel_ID TEXT,
+        subscribers INTEGER,
+        views INTEGER,
+        likes INTEGER,
+        dislikes INTEGER
     );'''
 }
 

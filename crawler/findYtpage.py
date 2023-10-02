@@ -34,14 +34,14 @@ options = Options()
 # 禁用通知
 options.add_argument("--disable-notifications")
 # 安裝return youtube dislike插件(chrome)
-# options.add_extension('data/return dislike/return_dislike_chrome.crx')
+# options.add_extension(os.path.abspath(os.path.dirname(__file__)+'data/return dislike/return_dislike_chrome.crx'))
 
 
 firefox= webdriver.Firefox(service=service, options=options)
 # 隱含等待: 等待網頁載入完成後，再執行下面的程式，且只需設定一次，下面再有仔入網頁的動作時，無須再次設定，也會等待(最多10秒)網頁在入後再執行
 firefox.implicitly_wait(5)
 # 安裝return youtube dislike插件(firefox)
-firefox.install_addon("data/return dislike/return_dislike.xpi", temporary=True)
+firefox.install_addon(os.path.abspath(os.path.dirname(__file__)+"/data/return dislike/return_dislike.xpi"), temporary=True)
 # 安裝插件完後，從插件的分頁跳回原本的分頁
 if len(firefox.window_handles) > 1:
     for i,window in enumerate(firefox.window_handles):
@@ -106,7 +106,7 @@ def findRelated(href ,num:int):
             description= description.find_element(By.CSS_SELECTOR, "yt-attributed-string:not(#attributed-snippet-text)")
             description= description.get_attribute("textContent").strip() or ""
             
-            # 抓取like, dislikes(要wait插件), views, subscribers, channel
+            # 抓取like, dislikes(要wait載入插件), views, subscribers, channel
             likes = firefox.find_element(By.XPATH, '/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[2]/div/div/ytd-menu-renderer/div[1]/ytd-segmented-like-dislike-button-renderer/yt-smartimation/div/div[1]/ytd-toggle-button-renderer/yt-button-shape/button/div[2]')
             likes= int(likes.text)
             dislikes= WebDriverWait(firefox, 5).until(EC.presence_of_element_located((By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[2]/div/div/ytd-menu-renderer/div[1]/ytd-segmented-like-dislike-button-renderer/yt-smartimation/div/div[2]/ytd-toggle-button-renderer/yt-button-shape/button")))
