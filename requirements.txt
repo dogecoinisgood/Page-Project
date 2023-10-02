@@ -16,3 +16,5 @@ opencv-contrib-python
 mock
 # ngrams
 nltk
+sentence-transformers
+LexRank
