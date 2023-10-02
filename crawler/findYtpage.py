@@ -13,9 +13,16 @@ from db import *
 
 
 
-keywords= "口紅 護唇膏 唇膏 唇蜜 唇釉 唇彩"
-keywords2= "唇部 唇妝 持色 水潤 顯色 飽和 保濕 滋潤 光澤 植物精油 護唇 抗氧化 維他命E油 超水 角鯊烷 女孩 大勢 襯膚 滑順顯色 持久度 荷巴油 唇膏控  薄擦 厚擦 濃郁 絲絨 低估 服貼 質地 覆蓋力 遮色"
-firstSearchResult= 100
+
+# 新增欄位
+updateCols("youtube", {"channel_name":"TEXT", "channel_ID":"TEXT", "subscribers":"INTEGER", "views":"INTEGER", "likes":"INTEGER", "dislikes":"INTEGER"})
+
+
+
+keywords= "美食 健身 網球 汽車"
+# 第
+firstSearchResult= 1000000
+# 最大關聯層數(設1:不抓關聯影片)
 relatedStack= 100
 
 
@@ -30,15 +37,24 @@ options.add_argument("--disable-notifications")
 firefox= webdriver.Firefox(service=service, options=options)
 # 隱含等待: 等待網頁載入完成後，再執行下面的程式，且只需設定一次，下面再有仔入網頁的動作時，無須再次設定，也會等待(最多10秒)網頁在入後再執行
 firefox.implicitly_wait(5)
+# 安裝return youtube dislike插件
+firefox.install_addon("data/return dislike/return_dislike.xpi", temporary=True)
+# 安裝插件完後，從插件的分頁跳回原本的分頁
+if len(firefox.window_handles) > 1:
+    for i,window in enumerate(firefox.window_handles):
+        if i != 0:
+            firefox.switch_to.window(window_name=window)
+            firefox.close()
+    firefox.switch_to.window(window_name=firefox.window_handles[0])
 
 
 
-firefox.get(f"https://www.youtube.com/results?search_query={keywords} {keywords2}")
+firefox.get(f"https://www.youtube.com/results?search_query={keywords}")
 
 # 從搜尋結果獲取第一批連結
 def getFirstLinks():
     # 等到所有<ytd-video-renderer>元素載入
-    firstLinks= WebDriverWait(firefox, 10).until(EC.presence_of_all_elements_located((By.TAG_NAME, "ytd-video-renderer")))
+    firstLinks= WebDriverWait(firefox, 5).until(EC.presence_of_all_elements_located((By.TAG_NAME, "ytd-video-renderer")))
     # 尋找所有<ytd-video-renderer>中，所有的<a id="thumbnail">元素，並取得這些元素中的連結內容
     firstLinks= [firstLink.find_element(By.CSS_SELECTOR,"a#thumbnail").get_attribute("href") for firstLink in firstLinks]
     # 篩選掉連結不符合要求的
@@ -51,9 +67,17 @@ firstLinks= getFirstLinks()
 for i in range(firstSearchResult):
     if len(firstLinks) >= firstSearchResult:
         break
-    body= WebDriverWait(firefox, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "ytd-app")))
+    body= WebDriverWait(firefox, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "ytd-app")))
     firefox.execute_script("window.scrollTo(0,document.querySelector('ytd-app').scrollHeight)")
     firstLinks= getFirstLinks()
+    # 如果頁面已經捲到底的話，按下"更多"或中斷迴圈
+    soup= BeautifulSoup(firefox.page_source, "html.parser")
+    results= soup.find_all("yt-formatted-string", {"id":"message"})
+    if results:
+        if results[0].get_text() == "沒有其他結果":
+            break
+    print(" 捲動次數:", i+1, "次, 共有", len(firstLinks), end="個連結\r")
+print()
 
 
 
@@ -63,31 +87,49 @@ candidates= []+ firstLinks
 def findRelated(href ,num:int):
     # 篩選掉含有時間戳和播放清單的部分
     href= href.split("&t=")[0].split("&list=")[0]
-    # 確認此連結不在資料庫裡
     
-    if num>0 and getData("youtube", "SELECT link FROM youtube WHERE link='{}';".format(href.replace("'", "''")))==[]:
+    if num>0:
         try:
             firefox.get(href)
             # 確認title載入後，獲取title的文字
-            title= WebDriverWait(firefox, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "h1.style-scope.ytd-watch-metadata")))
+            title= WebDriverWait(firefox, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "h1.style-scope.ytd-watch-metadata")))
             title= title.get_attribute("textContent").strip() or ""
             
             # 確認description載入後，獲取description的文字
             # 點擊展開說明欄，以獲取說明欄內完整文字
-            WebDriverWait(firefox, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "tp-yt-paper-button#expand"))).click()
-            description= WebDriverWait(firefox, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "ytd-text-inline-expander")))
+            WebDriverWait(firefox, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "tp-yt-paper-button#expand"))).click()
+            description= WebDriverWait(firefox, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "ytd-text-inline-expander")))
             # tag是yt-attributed-string的元素有2個，一個有id="attributed-snippet-text"，是剛進入時的說明欄。另一個沒有id，是展開後的說明欄
             description= description.find_element(By.CSS_SELECTOR, "yt-attributed-string:not(#attributed-snippet-text)")
             description= description.get_attribute("textContent").strip() or ""
+            
+            # 抓取like, dislikes(要wait插件), views, subscribers, channel
+            likes = firefox.find_element(By.XPATH, '/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[2]/div/div/ytd-menu-renderer/div[1]/ytd-segmented-like-dislike-button-renderer/yt-smartimation/div/div[1]/ytd-toggle-button-renderer/yt-button-shape/button/div[2]')
+            likes= int(likes.text)
+            dislikes= WebDriverWait(firefox, 5).until(EC.presence_of_element_located((By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[2]/div/div/ytd-menu-renderer/div[1]/ytd-segmented-like-dislike-button-renderer/yt-smartimation/div/div[2]/ytd-toggle-button-renderer/yt-button-shape/button")))
+            dislikes= int(dislikes.text)
+            views= firefox.find_element(By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[4]/div[1]/div/div[1]/yt-formatted-string/span[1]")
+            views= int( views.text.replace("觀看次數：",'').replace("次",'').replace(",",''))
+            subscribers= firefox.find_element(By.XPATH, "//*[@id='owner-sub-count']")
+            subscribers= subscribers.text.replace("位訂閱者","")
+            if "萬" in subscribers: subscribers= int(float(subscribers.replace("萬",""))*10000)
+            elif "億" in subscribers: subscribers= int(float(subscribers.replace("億",""))*100000000)
+            else: subscribers= int(subscribers)
+            channel= firefox.find_element(By.XPATH, "//*[@id='text']/a")
+            channel_name= channel.text
+            channel_id= channel.get_attribute("href").replace("https://www.youtube.com/",'')
+            
             
             print(title)
             print("----")
             
             # 如果title或description中有包含關鍵字，就儲存到資料庫，並開始找相關連結
             reStr= f"({'|'.join(keywords.strip().split())})"
-            reStr2= f"({'|'.join(keywords2.strip().split())})"
-            if re.search(reStr, title+description) and re.search(reStr2, title+description):
-                insertData("youtube", {"title":title, "description":description, "link": href})
+            print(reStr, re.search(reStr, title+description))
+            if re.search(reStr, title+description):
+                # 確認此連結不在資料庫裡，再新增
+                if getData("youtube", "SELECT link FROM youtube WHERE link='{}';".format(href.replace("'", "''")))==[]:
+                    insertData("youtube", {"title":title, "description":description, "link": href, "channel_name":channel_name, "channel_id":channel_id, "subscribers":subscribers, "views":views, "likes":likes, "dislikes":dislikes})
                 
                 # 開始找右邊相關影片的其他連結
                 results= WebDriverWait(firefox, 10).until(EC.presence_of_element_located((By.ID, "secondary")))
@@ -101,7 +143,8 @@ def findRelated(href ,num:int):
                         time.sleep(0.2)
                         candidates.append(result)
                         findRelated(result, num-1)
-        except:
+        except Exception as e:
+            print(e)
             return
 
     # firefox.quit()

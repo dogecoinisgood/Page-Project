@@ -31,8 +31,9 @@ options.add_argument("--disable-notifications")
 firefox= webdriver.Firefox(service=service, options=options)
 # 隱含等待: 等待網頁載入完成後，再執行下面的程式，且只需設定一次，下面再有仔入網頁的動作時，無須再次設定，也會等待(最多10秒)網頁在入後再執行
 firefox.implicitly_wait(5)
+# 安裝return youtube dislike插件
 firefox.install_addon("data/return dislike/return_dislike.xpi", temporary=True)
-
+# 安裝插件完後，從插件的分頁跳回原本的分頁
 if len(firefox.window_handles) > 1:
     for i,window in enumerate(firefox.window_handles):
         if i != 0:
@@ -55,10 +56,9 @@ def getInfoFromYtUrl(url):
     description= description.find_element(By.CSS_SELECTOR, "yt-attributed-string:not(#attributed-snippet-text)")
     description= description.get_attribute("textContent").strip() or ""
     
-    time.sleep(1)
+    
     likes = firefox.find_element(By.XPATH, '/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[2]/div/div/ytd-menu-renderer/div[1]/ytd-segmented-like-dislike-button-renderer/yt-smartimation/div/div[1]/ytd-toggle-button-renderer/yt-button-shape/button/div[2]')
     dislikes= WebDriverWait(firefox, 10).until(EC.presence_of_element_located((By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[2]/div/div/ytd-menu-renderer/div[1]/ytd-segmented-like-dislike-button-renderer/yt-smartimation/div/div[2]/ytd-toggle-button-renderer/yt-button-shape/button")))
-    # dislikes= firefox.find_element(By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[2]/div[2]/div/div/ytd-menu-renderer/div[1]/ytd-segmented-like-dislike-button-renderer/yt-smartimation/div/div[2]/ytd-toggle-button-renderer/yt-button-shape/button")
     views= firefox.find_element(By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[4]/div[1]/div/div[1]/yt-formatted-string/span[1]")
     subscribers= firefox.find_element(By.XPATH, "//*[@id='owner-sub-count']")
     channel= firefox.find_element(By.XPATH, "//*[@id='text']/a")
