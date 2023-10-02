@@ -11,10 +11,10 @@ from sklearn.feature_extraction.text import TfidfTransformer
 
 
 corpus= getData("youtube","SELECT videoContent FROM youtube")
-corpus= [row[0] for row in corpus][:210]  # [:N] 取用N篇文本
+corpus= [row[0] for row in corpus][:334]  # [:N] 取用N篇文本
 
 # 導入CKIPtagger 斷詞模型
-ws = WS('D:\Page-Project-Kuo\Page-Project-KUO\crawler\data\data')
+ws = WS('D:\desktopD\git\Page-Project-Kuo\Page-Project\Page-Project-KUO\crawler\ws_model')
 
 # 讀取文本（corpus）
 # path = r'C:\Users\User\Desktop\cosmetic_1.txt'  # 測試單一一篇文本時使用此區塊
@@ -52,7 +52,7 @@ for c in cut_corpus:
 
 
 # 讀取 stop-words.txt  # 此處為網友提供之個人stopwords詞庫
-with open(r'D:\Page-Project-Kuo\Page-Project-KUO\crawler\stop_words.txt', encoding='utf-8') as f:
+with open(r'D:\desktopD\git\Page-Project-Kuo\Page-Project\Page-Project-KUO\crawler\stop_words.txt', encoding='utf-8') as f:
     stop_word = f.read()
 
 # 整理 stop-word

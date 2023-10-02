@@ -17,6 +17,24 @@ createTableText= {
 }
 
 
+def getCols(tableName):
+    conn= sqlite3.connect(base_path+"/data/data.db")
+    cursor= conn.cursor()
+    cursor.execute(f"PRAGMA TABLE_INFO({tableName})")
+    return [col[1] for col in cursor.fetchall()]
+
+
+# cols= {"ID":"INTEGER", "link":"TEXT", ...}
+def updateCols(tableName, newCols):
+    conn= sqlite3.connect(base_path+"/data/data.db")
+    cursor= conn.cursor()
+    cursor.execute(f"PRAGMA TABLE_INFO({tableName})")
+    cols= [col[1] for col in cursor.fetchall()]
+    for col in newCols:
+        if col not in cols:
+            cursor.execute(f"ALTER TABLE {tableName} ADD COLUMN {col} {newCols[col]} DEFAULT '';")
+
+
 def getData(tableName, commamd):
     conn = sqlite3.connect(base_path+"/data/data.db")
     cursor= conn.cursor()
