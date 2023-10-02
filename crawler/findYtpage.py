@@ -128,16 +128,16 @@ def findRelated(href ,num:int):
             elif dislikes.isdigit(): dislikes= int(dislikes)
             else: dislikes= 0
             # 抓取views
-            views= firefox.find_element(By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[4]/div[1]/div/div[1]/yt-formatted-string/span[1]")
+            views= WebDriverWait(firefox, 5).until(EC.presence_of_element_located((By.XPATH, "/html/body/ytd-app/div[1]/ytd-page-manager/ytd-watch-flexy/div[5]/div[1]/div/div[2]/ytd-watch-metadata/div/div[4]/div[1]/div/div[1]/yt-formatted-string/span[1]")))
             views= int( views.text.replace("觀看次數：",'').replace("次",'').replace(",",''))
             # 抓取subscribers
-            subscribers= firefox.find_element(By.XPATH, "//*[@id='owner-sub-count']")
+            subscribers= WebDriverWait(firefox, 5).until(EC.presence_of_element_located((By.XPATH, "//*[@id='owner-sub-count']")))
             subscribers= subscribers.text.replace("位訂閱者","")
             if "萬" in subscribers: subscribers= int(float(subscribers.replace("萬",""))*10000)
             elif "億" in subscribers: subscribers= int(float(subscribers.replace("億",""))*100000000)
             else: subscribers= int(subscribers)
             # 抓取channel
-            channel= firefox.find_element(By.XPATH, "//*[@id='text']/a")
+            channel= WebDriverWait(firefox, 5).until(EC.presence_of_element_located((By.XPATH, "//*[@id='text']/a")))
             channel_name= channel.text
             channel_id= channel.get_attribute("href").replace("https://www.youtube.com/",'')
             
