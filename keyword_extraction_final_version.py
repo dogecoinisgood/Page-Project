@@ -11,11 +11,7 @@ from sklearn.feature_extraction.text import TfidfTransformer
 
 
 corpus= getData("youtube","SELECT videoContent FROM youtube")
-<<<<<<< HEAD
 corpus= [row[0] for row in corpus][:210]  # [:N] 取用N篇文本
-=======
-corpus= [row[0] for row in corpus][:20]  # [:N] 取用N篇文本
->>>>>>> a8aa08eec94327264d7523c8006be17f47e63f04
 
 # 導入CKIPtagger 斷詞模型
 ws = WS('.')
@@ -55,13 +51,8 @@ for c in cut_corpus:
 # ----------------------------------------------------------------------------------------------------------------------- #
 
 
-<<<<<<< HEAD
 # 讀取 stop-words.txt
 with open(r'D:\ckiptagger\data\stop_words.txt', encoding='utf-8') as f:
-=======
-# 讀取 stop-words.txt  # 此處為網友提供之個人stopwords詞庫
-with open(r'C:\Users\User\Desktop\stop_words.txt', encoding='utf-8') as f:
->>>>>>> a8aa08eec94327264d7523c8006be17f47e63f04
     stop_word = f.read()
 
 # 整理 stop-word
@@ -71,11 +62,7 @@ sw = stop_word.split('\n')
 # ----------------------------------------------------------------------------------------------------------------------- #
 
 
-<<<<<<< HEAD
 text_cv = CountVectorizer(max_df=1.0, min_df=0.5, stop_words=sw)  # 某 term 出現在總文本的比率若 < 50% 就剔除
-=======
-text_cv = CountVectorizer(max_df=0.8, min_df=0.5, stop_words=sw)  # 某 term 出現在總文本的比率若超過 > 80% or < 50% 就剔除
->>>>>>> a8aa08eec94327264d7523c8006be17f47e63f04
 
 td_matrix = text_cv.fit_transform(cut_corpus)
 
@@ -83,21 +70,12 @@ print(td_matrix.shape)
 # result >> (12,7)  # 12個句子(文本)，共提出7個關鍵字 # example
 
 print(text_cv.vocabulary_.keys())
-<<<<<<< HEAD
 # print(text_cv.vocabulary_)  # result >> {'xxx':N, 'xxx':M, ...}
 # print(sorted(text_cv.vocabulary_.items(), key=lambda x:x[1], reverse=True))  # result >> [('xxx':M, 'xxx':N, ...)]降冪排序(非couont數)
 # result >> dict_keys(['韓國瑜', '夫婦', '房產', '韓氏', '雲林', '韓辦', '貸款'])
 
 print(len(text_cv.vocabulary_.keys()))  # result >> 共提出幾個關鍵字數，數目
 # result >> 7  # 儲存關鍵字的dictionary的長度(含有幾個元素)
-=======
-print(text_cv.vocabulary_)
-print(sorted(text_cv.vocabulary_.items(), key=lambda x:x[1], reverse=True))
-# result >> dict_keys(['韓國瑜', '夫婦', '房產', '韓氏', '雲林', '韓辦', '貸款'])  # example
-
-print(len(text_cv.vocabulary_.keys()))
-# result >> 7  # 儲存關鍵字的dictionary的長度(含有幾個元素)  # example
->>>>>>> a8aa08eec94327264d7523c8006be17f47e63f04
 
 
 # # ----------------------------------------------------------------------------------------------------------------------- #
