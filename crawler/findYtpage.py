@@ -19,7 +19,7 @@ updateCols("youtube", {"channel_name":"TEXT", "channel_ID":"TEXT", "subscribers"
 
 
 
-keywords= "美食 健身 網球 汽車"
+keywords= "美食 健身 網球 汽車 .*"
 # 最少要多少筆搜尋結果(&搜尋的時候的最大捲動次數)
 firstSearchResult= 100
 # 最大關聯層數(設1:只抓搜尋結果，不抓關聯影片)
