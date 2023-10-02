@@ -179,7 +179,7 @@ def findRelated(href ,num:int):
             print(exc_type, fname, exc_tb.tb_lineno, e)
             return
 
-    # firefox.quit()
+
 
 
 # 分別進入第一批連結，並取得資料與下一批連結
