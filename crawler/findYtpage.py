@@ -141,28 +141,27 @@ def findRelated(href ,num:int):
             channel_name= channel.text
             channel_id= channel.get_attribute("href").replace("https://www.youtube.com/",'')
             
+            print(title)
+            print("----")
+            
+            # 開始找右邊相關影片的其他連結
+            results= WebDriverWait(firefox, 10).until(EC.presence_of_element_located((By.ID, "secondary")))
+            results= results.find_elements(By.TAG_NAME, "a")
+            results= [result.get_attribute("href") for result in results]
+            # 篩選掉含有時間戳的網址(大該率是同一部影片的不同時間而已)
+            results= [result for result in results if result!=None and "www.youtube.com/watch?" in result and '&t=' not in result]
+            
             # 關閉分頁
             firefox.switch_to.window(window_name=windowName)
             firefox.close()
             firefox.switch_to.window(window_name=firefox.window_handles[-1])
             
-            print(title)
-            print("----")
-            
             # 如果title或description中有包含關鍵字，就儲存到資料庫，並開始找相關連結
             reStr= f"({'|'.join(keywords.strip().split())})"
-            
             if re.search(reStr, title+description):
                 # 確認此連結不在資料庫裡，再新增
                 if getData("youtube", "SELECT link FROM youtube WHERE link='{}';".format(href.replace("'", "''")))==[]:
                     insertData("youtube", {"title":title, "description":description, "link": href, "channel_name":channel_name, "channel_id":channel_id, "subscribers":subscribers, "views":views, "likes":likes, "dislikes":dislikes})
-                
-                # 開始找右邊相關影片的其他連結
-                results= WebDriverWait(firefox, 10).until(EC.presence_of_element_located((By.ID, "secondary")))
-                results= results.find_elements(By.TAG_NAME, "a")
-                results= [result.get_attribute("href") for result in results]
-                # 篩選掉含有時間戳的網址(大該率是同一部影片的不同時間而已)
-                results= [result for result in results if result!=None and "www.youtube.com/watch?" in result and '&t=' not in result]
                 
                 for result in results:
                     if result not in candidates:
@@ -170,7 +169,7 @@ def findRelated(href ,num:int):
                         candidates.append(result)
                         findRelated(result, num-1)
         except Exception as e:
-            # 關閉分頁
+            # 報錯時也要關閉分頁
             firefox.switch_to.window(window_name=windowName)
             firefox.close()
             firefox.switch_to.window(window_name=firefox.window_handles[-1])
