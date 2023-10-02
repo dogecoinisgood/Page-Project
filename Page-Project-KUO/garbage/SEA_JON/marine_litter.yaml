@@ -1,0 +1,51 @@
+# train and val data
+train: /content/marine_litter/images/train/
+val: /content/marine_litter/images/valid/
+
+# class names
+names: 
+  0: WASTE_1
+  1: WASTE_2
+  2: WASTE_3
+  3: WASTE_4
+  4: WASTE_5
+  5: WASTE_6
+  6: WASTE_7
+  7: WASTE_8
+  8: WASTE_9
+  9: WASTE_10
+  10: WASTE_11
+  11: WASTE_12
+  12: WASTE_13
+  13: WASTE_14
+  14: WASTE_15
+  15: WASTE_16
+  16: WASTE_17
+  17: WASTE_18
+  18: WASTE_19
+  19: WASTE_20
+  20: WASTE_21
+  21: WASTE_22
+  22: WASTE_23
+  23: WASTE_24
+  24: WASTE_25
+  25: WASTE_26
+  26: WASTE_27
+  27: WASTE_28
+  28: WASTE_29
+  29: WASTE_30
+  30: WASTE_31
+  31: WASTE_32
+  32: WASTE_33
+  33: WASTE_34
+  34: WASTE_35
+  35: WASTE_36
+  36: WASTE_37
+  37: WASTE_38
+  38: WASTE_39
+  39: WASTE_40
+  40: WASTE_41
+  41: WASTE_42
+  42: WASTE_43
+  43: WASTE_44
+  44: WASTE_45
