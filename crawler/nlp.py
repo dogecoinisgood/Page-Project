@@ -44,6 +44,7 @@ data= getData("youtube", "SELECT videoContent,views,likes,dislikes FROM youtube"
 
 data= sorted(data, key=lambda x:(x[2]-x[3])/x[1], reverse=True)
 
+
 # for row in data[:50]:
 #     print(row[0][:15], row[1], row[2], row[3], (row[2]-row[3])/row[1], sep='\t')
 
