@@ -132,24 +132,26 @@ model_name= "distiluse-base-multilingual-cased-v2"
 model_path= os.path.abspath(os.path.join(base_path, "crawler/data/sentence-transformers", model_name))
 
 
-from sentence_transformers import util
-
 
 
 def loadModel2():
     global model
-    from sentence_transformers import SentenceTransformer
-    if os.path.exists(model_path):
-        model = SentenceTransformer(model_path)
-    else:
-        model = SentenceTransformer(model_name)
-        model.save(model_path)
+    try:
+        from sentence_transformers import SentenceTransformer
+        if os.path.exists(model_path):
+            model = SentenceTransformer(model_path)
+        else:
+            model = SentenceTransformer(model_name)
+            model.save(model_path)
+    except:
+        print("error: model未載入完畢")
 loadModelThread= Thread(target=loadModel2)
 def loadModel():
     global loadModelThread
     loadModelThread.start()
 
 def compare(category, artical):
+    from sentence_transformers import util
     loadModelThread.join()
     data= getData("youtube", f"SELECT videoContent,views,likes,dislikes FROM youtube WHERE category='{category}';")
     data= sorted(data, key=lambda x:(x[2]-x[3])/x[1], reverse=True)
