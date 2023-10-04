@@ -151,7 +151,9 @@ def loadModel():
 
 def compare(category, artical):
     from sentence_transformers import util
+    # 等到載入model再執行
     loadModelThread.join()
+    
     data= getData("youtube", f"SELECT videoContent,views,likes,dislikes FROM youtube WHERE category='{category}';")
     data= sorted(data, key=lambda x:(x[2]-x[3])/x[1], reverse=True)
     # 取前30筆文章做比對

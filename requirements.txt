@@ -17,4 +17,4 @@ mock
 # ngrams
 nltk
 sentence-transformers
-LexRank
+PyQt5
