@@ -111,8 +111,7 @@ for row in getData("youtube", "SELECT id,category FROM youtube"):
 
 # -------------------------  程式設定部分  -------------------------
 def getCategory():
-    # return [value[0] for value in dbExec("SELECT DISTINCT category FROM youtube;")]
-    return ["美妝","運動"]
+    return [value[0] for value in dbExec("SELECT DISTINCT category FROM youtube;")]
 
 
 def getKeywords(category):
