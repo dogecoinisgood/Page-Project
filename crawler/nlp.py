@@ -22,17 +22,20 @@ newArtical= '''
 '''
 
 
-if os.path.exists("data/sentence-transformers/multilingual-v2"):
-    model = SentenceTransformer('data/sentence-transformers/multilingual-v2')
+
+model_name= "distiluse-base-multilingual-cased-v2"
+model_path= os.path.abspath(os.path.join(base_path, "crawler/data/sentence-transformers", model_name))
+
+if os.path.exists(model_path):
+    model = SentenceTransformer(model_path)
 else:
-    model = SentenceTransformer('distiluse-base-multilingual-cased-v2')
-    model.save("data/sentence-transformers/multilingual-v2")
+    model = SentenceTransformer(model_name)
+    model.save(model_path)
 
 # 中文測試
 # wordpairs = [['老師', '教師', '泰國'], 
 #              ['商品', '貨物', '跑步'],
 #              ['商品', '商品', '產品'],
-#              ['哈囉你好嗎','珍重再見','期待再相逢']
 #             ]
 # for wordpair in wordpairs:
 #     embeddings = model.encode(wordpair)

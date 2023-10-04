@@ -131,7 +131,7 @@ data= data[:30]
 # sentence_embeddings = model.encode(data, show_progress_bar=True)
 
 
-# artical1= artical1.replace("小紅帽","皮卡丘").replace("大野狼","傑哥")
+artical1= artical1.replace("小紅帽","皮卡丘").replace("大野狼","傑哥").replace("狼","傑哥")
 # print(artical1)
 
 embeddings = model.encode([artical1, artical2])
