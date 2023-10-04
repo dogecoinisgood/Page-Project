@@ -139,12 +139,9 @@ class Ui_MainWindow(object):
     
     # 文章送出的按鈕按下
     def submit(self):
-        import datetime
-        startTime= datetime.datetime.now()
         category= self.categorySelect.currentText()
         testArticle= self.testArticle.toPlainText()
         self.result.setText(f"相似度: {compare(category, testArticle)*100 :.2f} %")
-        print((datetime.datetime.now()-startTime).seconds, "秒")
 
 
 if __name__ == "__main__":
