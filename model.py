@@ -134,9 +134,9 @@ model_path= os.path.abspath(os.path.join(base_path, "crawler/data/sentence-trans
 
 
 def loadModel2():
-    global model
+    global model, util
     try:
-        from sentence_transformers import SentenceTransformer
+        from sentence_transformers import SentenceTransformer, util
         if os.path.exists(model_path):
             model = SentenceTransformer(model_path)
         else:
@@ -150,7 +150,6 @@ def loadModel():
     loadModelThread.start()
 
 def compare(category, artical):
-    from sentence_transformers import util
     # 等到載入model再執行
     loadModelThread.join()
     
@@ -159,10 +158,6 @@ def compare(category, artical):
     # 取前30筆文章做比對
     if len(data)>=30: data= data[:30]
     embeddings = model.encode([row[0] or '' for row in data]+[artical])
-    # diss= []
-    # for i,row in enumerate(data):
-    #     diss.append(util.pytorch_cos_sim(embeddings[i], embeddings[-1]))
-    #     print(i, row[0][:30], diss[-1], sep='\t')
     diss= [float(util.pytorch_cos_sim(embeddings[i], embeddings[-1])) for i,row in enumerate(data)]
     # 取相似性最高的前10筆文章，做相似度的平均
     diss= sorted(diss, reverse=True)

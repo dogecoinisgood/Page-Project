@@ -94,23 +94,13 @@
       <property name="spacing">
        <number>10</number>
       </property>
-      <item row="2" column="1">
-       <widget class="QListWidget" name="keywordsList">
+      <item row="2" column="0">
+       <widget class="QPlainTextEdit" name="testArticle">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
          </font>
         </property>
-        <item>
-         <property name="text">
-          <string>#A</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>#B</string>
-         </property>
-        </item>
        </widget>
       </item>
       <item row="0" column="0">
@@ -155,13 +145,23 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0">
-       <widget class="QPlainTextEdit" name="testArticle">
+      <item row="2" column="1">
+       <widget class="QListWidget" name="listWidget">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
          </font>
         </property>
+        <item>
+         <property name="text">
+          <string>#A</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>#B</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
