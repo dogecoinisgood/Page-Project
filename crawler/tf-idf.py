@@ -37,12 +37,13 @@ print("-- ws finished --")
 
 
 # 暫存成json (不然前面斷詞每次都要跑20分鐘)
-# with open("data/word_segment.json", "r", encoding='utf-8') as f:
-#     import json
-#     word_segment= json.load(f)
 with open("data/word_segment.json", "w", encoding='utf-8') as f:
     import json
     json.dump(word_segment, f, indent=4)
+# with open("data/word_segment.json", "r", encoding='utf-8') as f:
+#     import json
+#     word_segment= json.load(f)
+
 
 
 
@@ -94,4 +95,4 @@ print("總詞數:", len(articlesCounter))
 import pandas as pd
 df= pd.DataFrame([[''.join(words),articlesCounter[words]] for words in articlesCounter])
 df= df.sort_values(by=[1], ascending=False)
-df.to_csv("data/tf-idf2.csv", index=False, header=False, encoding='utf-8')
+df.to_csv("data/tf-idf.csv", index=False, header=False, encoding='utf-8')
