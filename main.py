@@ -142,9 +142,11 @@ class Ui_MainWindow(object):
     
     # 文章送出的按鈕按下
     def submit(self):
+        self.commitBtn.setEnabled(False)
         category= self.categorySelect.currentText()
         testArticle= self.testArticle.toPlainText()
         self.result.setText(compare(category, testArticle))
+        self.commitBtn.setEnabled(True)
 
 
 if __name__ == "__main__":

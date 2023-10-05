@@ -24,7 +24,8 @@ newArtical= '''
 
 
 model_name= "distiluse-base-multilingual-cased-v2"
-model_path= os.path.abspath(os.path.join(base_path, "crawler/data/sentence-transformers", model_name))
+# model_name= "paraphrase-distilroberta-base-v1"
+model_path= os.path.abspath(os.path.join(base_path, "data/sentence-transformers", model_name))
 
 if os.path.exists(model_path):
     model = SentenceTransformer(model_path)
@@ -64,4 +65,5 @@ for i,row in enumerate(data):
     print(i, row[0][:30], diss[-1], sep='\t')
 # diss= [util.pytorch_cos_sim(embeddings[i], embeddings[-1]) for i,row in enumerate(data)]
 
+diss= sorted(diss, reverse=True)[:10]
 print(sum(diss)/len(diss))

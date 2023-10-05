@@ -162,14 +162,16 @@ def compare(category, artical):
     
     dataBad= data[-int(len(data)*0.1):]
     # 取前10%(約30筆)文章做比對
-    data= data[:int(len(data)*0.1)]
+    data= data[:int(len(data)*0.1)+1]
     embeddings = model.encode([row[0] or '' for row in data]+[artical])
     diss= [float(util.pytorch_cos_sim(embeddings[i], embeddings[-1])) for i,row in enumerate(data)]
     # 取前10%中，相似性最高的前10筆文章，做相似度的平均
     diss= sorted(diss, reverse=True)
     if len(diss)>=10: diss= diss[:10]
+    
+    embeddings = model.encode([row[0] or '' for row in dataBad]+[artical])
     # 後10%的不取10篇，而是和全部的文章做相似度的平均
-    diss2= [float(util.pytorch_cos_sim(embeddings[i], embeddings[-1])) for i,row in enumerate(data)]
+    diss2= [float(util.pytorch_cos_sim(embeddings[i], embeddings[-1])) for i,row in enumerate(dataBad)]
     
     return f"相似度: {sum(diss)/len(diss)*100 :.2f} % "+ ('good' if sum(diss)/len(diss)>=sum(diss2)/len(diss2) else 'bad')
 

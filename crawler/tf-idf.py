@@ -29,11 +29,22 @@ ws = WS('./data/ckip/data')
 
 print("-- ws start --")
 # 執行斷詞
-word_segment = ws(collect_corpus,
-                  sentence_segmentation=True,
-                  segment_delimiter_set={'?', '？', '!', '！', '。', '.', ',', '，', ';', ':', '、'})
+# word_segment = ws(collect_corpus,
+#                   sentence_segmentation=True,
+#                   segment_delimiter_set={'?', '？', '!', '！', '。', '.', ',', '，', ';', ':', '、'})
 
 print("-- ws finished --")
+
+
+import json
+with open("data/word_segment.json", "r", encoding='utf-8') as f:
+    word_segment= json.load(f)
+
+# with open("data/word_segment.json", "w", encoding='utf-8') as f:
+#     json.dump(word_segment, f, indent=4)
+
+
+
 
 articlesCounter= Counter()
 # 獲取1篇文章的所有字詞Counter (ex: {"你好":2, ...})
@@ -59,26 +70,29 @@ for word in articlesCounter:
     articlesCounter[word] /= len(word_segment)
     # freq * log(相關和不相關的文章總數/ 出現文章數)
     articlesCounter[word] *= math.log(
-            (len(word_segment)+len(notRelate_data))
+            (1+len(notRelate_data))
             /(sum([1 for article in notRelate_data if word in article])+ 1)  # +len(word_segment)
         )
+    # articlesCounter[word] *= math.log(
+    #         (len(word_segment)+len(notRelate_data))
+    #         /(sum([1 for article in notRelate_data if word in article])+ len(word_segment))
+    #     )
 
-# 重新排序
-articlesCounter= sorted(articlesCounter, key=articlesCounter.get, reverse=True)
 
 
 
-for i,m in enumerate(articlesCounter):
+
+for i,m in enumerate(articlesCounter.most_common()):
     if i < 50:
-        print(m, "\ttf-idf:", articlesCounter[m])
+        print(m[0], "\ttf-idf:", m[1])
     if i > len(articlesCounter)-50:
-        print(m, "\ttf-idf:", articlesCounter[m])
+        print(m[0], "\ttf-idf:", m[1])
 print(len(articlesCounter))
 
 # 存成csv
-import numpy as np
 import pandas as pd
 # arr= np.array([[''.join(words),hMarkov[words]] for words in hMarkov])
 # np.savetxt("data/hMarkovResult.csv", arr, delimiter=',', encoding='utf-8')
 df= pd.DataFrame([[''.join(words),articlesCounter[words]] for words in articlesCounter])
-df.to_csv("data/tf-idf.csv", encoding='utf-8')
+df= df.sort_values(by=[1], ascending=False)
+df.to_csv("data/tf-idf2.csv", index=False, header=False, encoding='utf-8')
