@@ -36,7 +36,7 @@ word_segment = ws(collect_corpus,
 print("-- ws finished --")
 
 
-# 暫存成json (不然前面斷詞每次都要跑20分鐘)
+# 暫存成json (測試用) (不然前面斷詞每次都要跑20分鐘)
 with open("data/word_segment.json", "w", encoding='utf-8') as f:
     import json
     json.dump(word_segment, f, indent=4)
@@ -73,7 +73,7 @@ for word in articlesCounter:
     # freq * log(相關和不相關的文章總數/ 出現文章數)
     articlesCounter[word] *= math.log(
             (1+len(notRelate_data))
-            /(sum([1 for article in notRelate_data if word in article])+ 1)  # +len(word_segment)
+            /(sum([1 for article in notRelate_data if word in article])+ 1)
         )
     # articlesCounter[word] *= math.log(
     #         (len(word_segment)+len(notRelate_data))
