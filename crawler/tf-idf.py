@@ -29,19 +29,20 @@ ws = WS('./data/ckip/data')
 
 print("-- ws start --")
 # 執行斷詞
-# word_segment = ws(collect_corpus,
-#                   sentence_segmentation=True,
-#                   segment_delimiter_set={'?', '？', '!', '！', '。', '.', ',', '，', ';', ':', '、'})
+word_segment = ws(collect_corpus,
+                  sentence_segmentation=True,
+                  segment_delimiter_set={'?', '？', '!', '！', '。', '.', ',', '，', ';', ':', '、'})
 
 print("-- ws finished --")
 
 
-import json
-with open("data/word_segment.json", "r", encoding='utf-8') as f:
-    word_segment= json.load(f)
-
-# with open("data/word_segment.json", "w", encoding='utf-8') as f:
-#     json.dump(word_segment, f, indent=4)
+# 暫存成json (不然前面斷詞每次都要跑20分鐘)
+# with open("data/word_segment.json", "r", encoding='utf-8') as f:
+#     import json
+#     word_segment= json.load(f)
+with open("data/word_segment.json", "w", encoding='utf-8') as f:
+    import json
+    json.dump(word_segment, f, indent=4)
 
 
 
