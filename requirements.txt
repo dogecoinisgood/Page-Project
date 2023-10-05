@@ -16,5 +16,6 @@ opencv-contrib-python
 mock
 # ngrams
 nltk
+ckiptagger[tf,gdown]
 sentence-transformers
 PyQt5

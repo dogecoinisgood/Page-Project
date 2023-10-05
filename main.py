@@ -144,7 +144,7 @@ class Ui_MainWindow(object):
     def submit(self):
         category= self.categorySelect.currentText()
         testArticle= self.testArticle.toPlainText()
-        self.result.setText(f"相似度: {compare(category, testArticle)*100 :.2f} %")
+        self.result.setText(compare(category, testArticle))
 
 
 if __name__ == "__main__":

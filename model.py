@@ -111,11 +111,15 @@ for row in getData("youtube", "SELECT id,category FROM youtube"):
 
 # -------------------------  程式設定部分  -------------------------
 def getCategory():
+    return ["美妝", "球鞋"]
     return [value[0] for value in dbExec("SELECT DISTINCT category FROM youtube;")]
 
 
 def getKeywords(category):
-    return ["a","b","c"]
+    return {
+        "美妝": ["產品", "品牌", "唇膏", "色號", "質地", "光澤", "漂亮", "推薦", "嘴唇", "霧面", "包裝", "不錯", "保濕", "彩妝", "訂閱", "膚色", "好用", "皮膚", "好看", "特別", "自然", "系列", "搭配", "上妝", "底妝", "腮紅", "眼妝", "眼影"],
+        "球鞋": ["籃球", "休閒", "合腳", "磨腳", "顯瘦", "增高", "推薦", "品牌", "好用", "防水", "設計", "產品", "聯名", "搭配", "長腿", "防滑", "山系", "慢跑", "好看", "舒適", "健走", "運動", "柔軟", "真皮", "刺繡", "鞋帶", "橡膠", "鞋底"]
+    }[category]
     result= getData("category", f"SELECT keywords FROM category WHERE category='{category}';")
     if result:
         return json.loads(result[0])
@@ -155,13 +159,18 @@ def compare(category, artical):
     
     data= getData("youtube", f"SELECT videoContent,views,likes,dislikes FROM youtube WHERE category='{category}';")
     data= sorted(data, key=lambda x:(x[2]-x[3])/x[1], reverse=True)
-    # 取前30筆文章做比對
-    if len(data)>=30: data= data[:30]
+    
+    dataBad= data[-int(len(data)*0.1):]
+    # 取前10%(約30筆)文章做比對
+    data= data[:int(len(data)*0.1)]
     embeddings = model.encode([row[0] or '' for row in data]+[artical])
     diss= [float(util.pytorch_cos_sim(embeddings[i], embeddings[-1])) for i,row in enumerate(data)]
-    # 取相似性最高的前10筆文章，做相似度的平均
+    # 取前10%中，相似性最高的前10筆文章，做相似度的平均
     diss= sorted(diss, reverse=True)
     if len(diss)>=10: diss= diss[:10]
-    return sum(diss)/len(diss)
+    # 後10%的不取10篇，而是和全部的文章做相似度的平均
+    diss2= [float(util.pytorch_cos_sim(embeddings[i], embeddings[-1])) for i,row in enumerate(data)]
+    
+    return f"相似度: {sum(diss)/len(diss)*100 :.2f} % "+ ('good' if sum(diss)/len(diss)>=sum(diss2)/len(diss2) else 'bad')
 
 

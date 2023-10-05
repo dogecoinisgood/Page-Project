@@ -1,4 +1,5 @@
 python-3.11.5-embed
 crawler/data/ffmpeg/*.exe
 crawler/data/whisper_model
+crawler/data/ckip
 crawler/data/sentence-transformers
