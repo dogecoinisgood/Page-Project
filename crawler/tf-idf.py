@@ -82,18 +82,16 @@ for word in articlesCounter:
 
 
 
-
+# print出前50&後50的(測試用)
 for i,m in enumerate(articlesCounter.most_common()):
     if i < 50:
         print(m[0], "\ttf-idf:", m[1])
     if i > len(articlesCounter)-50:
         print(m[0], "\ttf-idf:", m[1])
-print(len(articlesCounter))
+print("總詞數:", len(articlesCounter))
 
 # 存成csv
 import pandas as pd
-# arr= np.array([[''.join(words),hMarkov[words]] for words in hMarkov])
-# np.savetxt("data/hMarkovResult.csv", arr, delimiter=',', encoding='utf-8')
 df= pd.DataFrame([[''.join(words),articlesCounter[words]] for words in articlesCounter])
 df= df.sort_values(by=[1], ascending=False)
 df.to_csv("data/tf-idf2.csv", index=False, header=False, encoding='utf-8')
