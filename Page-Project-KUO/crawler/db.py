@@ -14,7 +14,18 @@ createTableText= {
         company TEXT,
         videoContent TEXT
     );'''
+    ,
+    "youtube2":'''CREATE TABLE IF NOT EXISTS youtube2(
+        ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        description TEXT,
+        link TEXT,
+        company TEXT,
+        videoContent TEXT
+    );'''
+
 }
+
 
 
 def getCols(tableName):
@@ -38,7 +49,7 @@ def updateCols(tableName, newCols):
 def getData(tableName, commamd):
     conn = sqlite3.connect(base_path+"/data/data.db")
     cursor= conn.cursor()
-    cursor.execute(createTableText[tableName])
+    cursor.execute(createTableText[tableName])#防呆，避免沒檔案後跑程式報錯，所以沒有DB時會自動創一份
     result= cursor.execute(commamd)
     # conn.close()
     return result.fetchall()

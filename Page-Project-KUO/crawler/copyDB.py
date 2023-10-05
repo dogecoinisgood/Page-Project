@@ -4,8 +4,8 @@ import os, sqlite3
 
 
 # copy db2的資料，進到db1
-db1_path= "data/data.db"
-db2_path= "data/data2.db"
+db1_path= "data/data_not_relate.db"
+db2_path= "data/data_not_relate5.db"
 
 
 

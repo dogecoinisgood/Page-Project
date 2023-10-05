@@ -12,9 +12,7 @@ from sklearn.feature_extraction.text import TfidfTransformer
 
 corpus= getData("youtube","SELECT videoContent FROM youtube")
 
-corpus= [row[0] for row in corpus][:334]  # [:N] 取用N篇文本
-
-# corpus= [row[0] for row in corpus][:20]  # [:N] 取用N篇文本
+corpus= [row[0] for row in corpus][:330]  # [:N] 取用N篇文本
 
 
 # 導入CKIPtagger 斷詞模型
@@ -37,12 +35,9 @@ word_segment = ws(collect_corpus,
                   sentence_segmentation=True,
                   segment_delimiter_set={'?', '？', '!', '！', '。', '.', ',', '，', ';', ':', '、'})
 
-# print(word_segment)
-
-
 # ----------------------------------------------------------------------------------------------------------------------- #
 
-
+#斷好的結果用「空白格（Space）」連接起來
 cut_corpus = []
 for i in word_segment:
     cut_corpus.append(' '.join(i))
@@ -51,26 +46,20 @@ for c in cut_corpus:
     # print (c)
     pass
 
-
 # ----------------------------------------------------------------------------------------------------------------------- #
 
 
 
-# 讀取 stop-words.txt  # 此處為網友提供之個人stopwords詞庫
+# 讀取stop-words.txt  # 此處為網友提供之個人stopwords詞庫
 with open(r'D:\desktopD\git\Page-Project-Kuo\Page-Project\Page-Project-KUO\crawler\stop_words.txt', encoding='utf-8') as f:
     stop_word = f.read()
 
 # 整理 stop-word
 sw = stop_word.split('\n')
 
-
 # ----------------------------------------------------------------------------------------------------------------------- #
 
-
-
-text_cv = CountVectorizer(max_df=1.0, min_df=0.5, stop_words=sw)  # 某 term 出現在總文本的比率若 < 50% 就剔除
-
-text_cv = CountVectorizer(max_df=0.8, min_df=0.5, stop_words=sw)  # 某 term 出現在總文本的比率若超過 > 80% or < 50% 就剔除
+text_cv = CountVectorizer(max_df=1.0, min_df=0.0, stop_words=sw)  # 某 term 出現在總文本的比率若超過 > 80% or < 50% 就剔除
 
 
 td_matrix = text_cv.fit_transform(cut_corpus)
@@ -87,11 +76,11 @@ print(text_cv.vocabulary_.keys())
 print(len(text_cv.vocabulary_.keys()))  # result >> 共提出幾個關鍵字數，數目
 # result >> 7  # 儲存關鍵字的dictionary的長度(含有幾個元素)
 
-print(text_cv.vocabulary_)
-print(sorted(text_cv.vocabulary_.items(), key=lambda x:x[1], reverse=True))
+# print(text_cv.vocabulary_)
+# print(sorted(text_cv.vocabulary_.items(), key=lambda x:x[1], reverse=True))
 # result >> dict_keys(['韓國瑜', '夫婦', '房產', '韓氏', '雲林', '韓辦', '貸款'])  # example
 
-print(len(text_cv.vocabulary_.keys()))
+# print(len(text_cv.vocabulary_.keys()))
 # result >> 7  # 儲存關鍵字的dictionary的長度(含有幾個元素)  # example
 
 
@@ -107,12 +96,11 @@ tfidf_matrix = tfidf.fit_transform(td_matrix)
 # print(td_matrix)
 
 tfidf.idf_
-# result >> array([1.48550782, 1.48550782, 1.77318989, 1.77318989, 1.36772478, 1.61903921, 1.61903921])
-                   
+# result >> array([1.48550782, 1.48550782, 1.77318989, 1.77318989, 1.36772478, 1.61903921, 1.61903921]) 
         
 # ----------------------------------------------------------------------------------------------------------------------- #
 
- 
+
 import pandas as pd
 df = pd.DataFrame(tfidf_matrix.T.toarray(), index=text_cv.vocabulary_.keys())  
 print(df)
@@ -127,11 +115,11 @@ print(keyword_row_mean)
 # 將計算結果匯出為csv檔案
 
 # Specify the name of the excel file
-file_name = 'keywords_extraction_output.xlsx'  # 自訂檔名
+file_name = 'keywords_extraction_output-1.csv'  # 自訂檔名
 
 # saving the excelsheet
-keyword_row_mean.to_excel(file_name)
-print('Extracxted keywords successfully exported into Excel File!')
+keyword_row_mean.to_csv(file_name)
+print('Extracxted keywords successfully exported into csv File!')
 
 
 

@@ -14,7 +14,7 @@ from db import *
 
 enumerate
 
-keywords= "褲子"
+keywords= "上課"
 firstSearchResult= 100
 relatedStack= 100
 
@@ -23,7 +23,7 @@ service = Service(executable_path=os.path.abspath(os.path.dirname(__file__)+"/da
 options = Options()
 
 # 不跳實際的瀏覽器視窗出來(減少消耗無謂的效能)
-options.add_argument("--headless")
+# options.add_argument("--headless")
 # 禁用通知
 options.add_argument("--disable-notifications")
 
