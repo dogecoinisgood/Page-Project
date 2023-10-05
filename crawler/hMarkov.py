@@ -53,6 +53,17 @@ hMarkov= dict(sorted(hMarkov.items(), key=lambda x:x[1], reverse=True))
 
 
 for i,m in enumerate(hMarkov):
-    if i < 100:
+    if i < 50:
         print(m, "\t馬可夫機率:", hMarkov[m], "\t出現次數:", freqs[m])
+    if i > len(hMarkov)-50:
+        print(m, "\t馬可夫機率:", hMarkov[m], "\t出現次數:", freqs[m])
+print(len(hMarkov))
+
+# 存成csv
+import numpy as np
+import pandas as pd
+# arr= np.array([[''.join(words),hMarkov[words]] for words in hMarkov])
+# np.savetxt("data/hMarkovResult.csv", arr, delimiter=',', encoding='utf-8')
+df= pd.DataFrame([[''.join(words),hMarkov[words]] for words in hMarkov])
+df.to_csv("data/hMarkovResult.csv", encoding='utf-8')
 
