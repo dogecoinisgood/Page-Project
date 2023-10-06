@@ -109,6 +109,7 @@ class Ui_MainWindow(object):
         self.keywordsList.setSortingEnabled(__sortingEnabled)
         # self.categorySelect.setItemText(0, _translate("MainWindow", "美妝"))
         # self.categorySelect.setItemText(1, _translate("MainWindow", "運動"))
+        # -------------------------  以上為qt designer自動生成部分  -------------------------
         self.setCategory()
     
     
@@ -147,6 +148,11 @@ class Ui_MainWindow(object):
         testArticle= self.testArticle.toPlainText()
         self.result.setText(compare(category, testArticle))
         self.commitBtn.setEnabled(True)
+        
+
+
+
+        # -------------------------  以下為qt designer自動生成部分  -------------------------
 
 
 if __name__ == "__main__":

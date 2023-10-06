@@ -131,10 +131,11 @@ def getKeywords(category):
 
 
 # -------------------------  文章比對部分  -------------------------
+
+
+
 model_name= "distiluse-base-multilingual-cased-v2"
 model_path= os.path.abspath(os.path.join(base_path, "crawler/data/sentence-transformers", model_name))
-
-
 
 
 def loadModel2():
@@ -153,26 +154,30 @@ def loadModel():
     global loadModelThread
     loadModelThread.start()
 
-def compare(category, artical):
+def compare(category, artical:str):
     # 等到載入model再執行
     loadModelThread.join()
     
     data= getData("youtube", f"SELECT videoContent,views,likes,dislikes FROM youtube WHERE category='{category}';")
     data= sorted(data, key=lambda x:(x[2]-x[3])/x[1], reverse=True)
     
-    dataBad= data[-int(len(data)*0.1):]
+    # 取後50%(約150筆)文章做比對
+    dataBad= data[-int(len(data)*0.5):]
     # 取前10%(約30筆)文章做比對
     data= data[:int(len(data)*0.1)+1]
     embeddings = model.encode([row[0] or '' for row in data]+[artical])
     diss= [float(util.pytorch_cos_sim(embeddings[i], embeddings[-1])) for i,row in enumerate(data)]
     # 取前10%中，相似性最高的前10筆文章，做相似度的平均
     diss= sorted(diss, reverse=True)
+    avgDiss= sum(diss)/len(diss)
     if len(diss)>=10: diss= diss[:10]
+    avgDissBest= sum(diss)/len(diss)
     
     embeddings = model.encode([row[0] or '' for row in dataBad]+[artical])
-    # 後10%的不取10篇，而是和全部的文章做相似度的平均
+    # 後10%的不取10篇，而是和全部後10%的文章做相似度的平均
     diss2= [float(util.pytorch_cos_sim(embeddings[i], embeddings[-1])) for i,row in enumerate(dataBad)]
+    avgDiss2= sum(diss2)/len(diss2)
     
-    return f"相似度: {sum(diss)/len(diss)*100 :.2f} % "+ ('good' if sum(diss)/len(diss)>=sum(diss2)/len(diss2) else 'bad')
+    return f"相似度: {avgDissBest*100 :.2f} % "+ ('good' if avgDiss>=avgDiss2 else 'bad')
 
 
